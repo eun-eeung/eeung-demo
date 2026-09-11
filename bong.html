@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><link rel="icon" href="favicon.png"><meta name="viewport" content="width=device-width, initial-scale=1"><title>대가리 봉합기</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@700;900&family=Noto+Sans+KR:wght@400;500;700&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+:root{--bg:#0F1012;--panel:#17191C;--panel2:#1E2126;--ink:#F2F3F5;--muted:#9AA0A8;--faint:#5C6269;--line:#262A30;--red:#FF5247;--green:#33E58C;--green-deep:#1FB86D}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Sans KR",-apple-system,"Apple SD Gothic Neo",sans-serif;font-size:14px;line-height:1.6;-webkit-font-smoothing:antialiased}
+h1,h2,.num{font-family:"Gothic A1","Noto Sans KR",sans-serif}
+.mono{font-family:"IBM Plex Mono",monospace}
+.wrap{display:grid;grid-template-columns:340px 1fr;min-height:100vh}
+@media (max-width:860px){.wrap{grid-template-columns:1fr}}
+.side{background:var(--panel);padding:24px 22px;border-right:1px solid var(--line)}
+.main{padding:26px 28px 40px;max-width:820px}
+h1{font-size:26px;font-weight:900;margin:0;letter-spacing:-.5px}
+.sub{color:var(--muted);font-size:12px;margin:2px 0 22px}
+.lbl{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:18px 0 8px}
+select,input[type=text]{width:100%;background:var(--panel2);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:9px 10px;font:inherit;font-size:13.5px}
+input[type=text]{width:96px;text-align:right}
+.row{display:flex;align-items:center;gap:10px}
+.row .v{min-width:72px;text-align:right;color:var(--ink);font-weight:700;font-variant-numeric:tabular-nums;font-size:13px}
+input[type=range]{flex:1;accent-color:var(--green)}
+.seg{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;background:var(--panel2);padding:4px;border-radius:9px}
+.seg button{background:transparent;border:0;color:var(--muted);font:inherit;font-size:12.5px;font-weight:700;padding:7px 4px;border-radius:6px;cursor:pointer}
+.seg button.on{background:var(--ink);color:var(--bg)}
+.seg2{grid-template-columns:repeat(2,1fr)} .seg3{grid-template-columns:repeat(3,1fr)}
+.note{font-size:10.5px;color:var(--faint);line-height:1.5;margin-top:20px}
+.kicker{font-size:13px;font-weight:700;color:var(--muted)}
+.big{font-size:44px;font-weight:900;color:var(--red);line-height:1.1;font-variant-numeric:tabular-nums;letter-spacing:-1px}
+.big small{font-size:16px;color:var(--ink);font-weight:700;letter-spacing:0;margin-left:6px}
+.lump{font-size:12px;color:var(--muted);margin-top:2px}
+.bd{background:var(--panel);border-radius:10px;padding:10px 14px;margin:14px 0;display:grid;gap:4px}
+.bd div{display:flex;justify-content:space-between;font-size:12.5px} .bd span:first-child{color:var(--muted)} .bd span:last-child{font-variant-numeric:tabular-nums;font-weight:500}
+.tot{font-size:13px;font-weight:700;margin-bottom:26px}
+.tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:10px 0 14px}
+@media (max-width:560px){.tiles{grid-template-columns:repeat(2,1fr)}}
+.tile{background:var(--panel);border-radius:10px;padding:12px 14px}
+.tile .y{font-size:11px;font-weight:700;color:var(--muted)} .tile .n{font-size:22px;font-weight:900;color:var(--green);font-variant-numeric:tabular-nums;line-height:1.2} .tile .s{font-size:10.5px;color:var(--muted)}
+.punch{background:linear-gradient(135deg,#123B2A,#0B1F18);border-radius:14px;padding:18px 20px;margin-bottom:26px}
+.punch .k{font-size:13px;font-weight:700} .punch .n{font-size:36px;font-weight:900;color:var(--green);font-variant-numeric:tabular-nums;letter-spacing:-1px;line-height:1.15} .punch .s{font-size:12.5px;color:#B9D9C8} .punch .r{font-size:15px;font-weight:800;color:#DFF5EA;margin:2px 0 4px;font-variant-numeric:tabular-nums}
+.chart{background:var(--panel);border-radius:12px;padding:14px 12px 8px;height:260px}
+.legend{display:flex;gap:16px;font-size:12px;color:var(--muted);margin:8px 2px 0}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+.tcard{background:var(--panel);border-radius:12px;padding:14px 16px;margin:10px 0 26px;display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+@media (max-width:560px){.tcard{grid-template-columns:1fr 1fr}}
+.tcard .k{font-size:11px;font-weight:700;color:var(--muted)} .tcard .n{font-size:18px;font-weight:900;font-variant-numeric:tabular-nums;line-height:1.25} .tcard .s{font-size:11px;color:var(--muted)}
+.tcard .verdict{grid-column:1/-1;border-top:1px solid var(--line);padding-top:10px;font-size:13px;font-weight:700}
+.foot{font-size:10.5px;color:var(--faint);margin-top:22px;line-height:1.5}
+button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--green);outline-offset:2px}
+</style>
+
+<div class="wrap">
+  <aside class="side">
+    <h1>🩹 대가리 봉합기</h1>
+    <div class="sub">차 사기 전에 한 번만 봅시다</div>
+
+    <div class="lbl">어떤 차?</div>
+    <select id="preset"></select>
+    <div class="row" style="margin-top:8px">
+      <input type="text" id="price" value="2900"><span style="color:var(--muted)">만원</span>
+      <input type="range" id="priceR" min="1000" max="15000" step="50" value="2900">
+    </div>
+
+    <div class="lbl">어떻게 살 건데?</div>
+    <div class="seg" id="buy"></div>
+    <div class="row" style="margin-top:8px;gap:8px">
+      <div class="seg seg2" id="term" style="flex:1"></div>
+      <div class="seg seg3" id="fuel" style="flex:1.4"></div>
+    </div>
+    <div class="lbl">계약 끝나면?</div>
+    <div class="seg seg2" id="after"></div>
+    <div style="font-size:11px;color:var(--muted);margin-top:4px" id="afterHint"></div>
+    <div class="row" id="loanRow" style="margin-top:8px"><span style="color:var(--muted);font-size:12px">할부 금리</span><input type="range" id="loan" min="3" max="12" step="0.5" value="6.5"><span class="v" id="loanV">6.5%</span></div>
+
+    <div class="lbl">얼마나 타?</div>
+    <div class="row"><input type="range" id="km" min="5000" max="30000" step="1000" value="15000"><span class="v" id="kmV">연 15천km</span></div>
+
+    <div class="lbl">그 돈 대신 투자하면?</div>
+    <div class="row"><input type="range" id="ret" min="4" max="12" step="0.5" value="10"><span class="v" id="retV">연 10.0%</span></div>
+    <div style="font-size:11px;color:var(--muted);margin-top:4px">S&amp;P 500(VOO) 장기 명목 평균 약 10% · 물가 반영 시 약 7%</div>
+    <div class="lbl">물가상승률 (실질 가치 환산)</div>
+    <div class="row"><input type="range" id="inf" min="0" max="5" step="0.5" value="2.5"><span class="v" id="infV">연 2.5%</span></div>
+    <div style="font-size:11px;color:var(--muted);margin-top:4px">한국 최근 20년 평균 약 2.3~2.5% · 아래 결과에 '지금 돈으로' 환산값을 같이 표시</div>
+    <div class="lbl">차 없으면 대신 쓰는 교통비 (월)</div>
+    <div class="row"><input type="range" id="alt" min="0" max="40" step="1" value="15"><span class="v" id="altV">15만원</span></div>
+
+    <div class="lbl">내 시간은 얼마?</div>
+    <div class="row"><span style="color:var(--muted);font-size:12px;min-width:34px">연봉</span><input type="text" id="salary" value="4500"><span style="color:var(--muted)">만원</span><span class="v" id="hourly" style="min-width:0;margin-left:auto"></span></div>
+    <div class="row" style="margin-top:8px"><span style="color:var(--muted);font-size:12px;min-width:74px">뚜벅이 편도</span><input type="range" id="tPub" min="10" max="150" step="5" value="60"><span class="v" id="tPubV">60분</span></div>
+    <div class="row" style="margin-top:6px"><span style="color:var(--muted);font-size:12px;min-width:74px">자차 편도</span><input type="range" id="tCar" min="5" max="150" step="5" value="35"><span class="v" id="tCarV">35분</span></div>
+    <div class="row" style="margin-top:6px"><span style="color:var(--muted);font-size:12px;min-width:74px">월 출근일</span><input type="range" id="days" min="0" max="26" step="1" value="22"><span class="v" id="daysV">22일</span></div>
+    <label class="row" style="margin-top:10px;font-size:12.5px;cursor:pointer"><input type="checkbox" id="useTime" style="accent-color:var(--green)"> 아낀 시간의 가치를 30년 계산에 반영</label>
+
+    <div class="note" id="assume"></div>
+  </aside>
+
+  <main class="main">
+    <div class="kicker">이 차를 타면 매달</div>
+    <div class="big"><span id="monthly">—</span><small>나갑니다</small></div>
+    <div class="lump" id="lump" hidden></div>
+    <div class="bd" id="bd"></div>
+    <div class="tot" id="tot"></div>
+
+    <div class="kicker">내 시간으로 따지면</div>
+    <div class="tcard" id="tcard"></div>
+
+    <div class="kicker">그 돈을 매달 S&amp;P 500에 넣었다면</div>
+    <div class="tiles" id="tiles"></div>
+    <div class="punch">
+      <div class="k">30년 뒤, 차 안 산 사람과의 차이</div>
+      <div class="n" id="punchN">—</div>
+      <div class="r" id="punchR"></div>
+      <div class="s" id="punchS"></div>
+    </div>
+
+    <div class="kicker">누적 지출 vs 투자 자산 (30년)</div>
+    <div class="chart" style="margin-top:8px"><canvas id="c"></canvas></div>
+    <div class="legend"><span><i style="background:var(--red)"></i>차에 쓴 돈</span><span><i style="background:var(--green)"></i>투자 자산</span><span><i style="background:transparent;border-top:2px dashed var(--green);height:0;width:14px;vertical-align:3px"></i>지금 돈 기준(물가 반영)</span></div>
+
+    <div class="foot">※ 모든 수치는 가정에 기반한 추정치입니다. 수익률·보험료·연비·감가는 사람마다 다르고, 투자 권유가 아닙니다. 그래도 차는 한 번 더 생각합시다.</div>
+  </main>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script>
+const PRESETS=[["캐스퍼",1990,"gas"],["아반떼",2450,"gas"],["셀토스",2900,"gas"],["쏘렌토 HEV",4100,"gas"],["그랜저",4600,"gas"],["모델 Y",5300,"ev"],["BMW 5",7600,"gas"],["벤츠 E",8900,"gas"]];
+const BUY=[["inst","할부"],["rent","장기렌트"],["lease","리스"],["cash","현금"]];
+const FUEL=[["gas","가솔린"],["diesel","디젤"],["ev","전기"]];
+const S={price:2900,buy:"inst",term:5,fuel:"gas",km:15000,ret:10,alt:15,loan:6.5,salary:4500,tPub:60,tCar:35,days:22,useTime:false,after:"keep",inf:2.5};
+const real=(v,years)=>v/Math.pow(1+S.inf/100,years);
+function timeValue(s){const hourly=s.salary*1e4/2080; const savedH=Math.max(s.tPub-s.tCar,0)*2*s.days/60; const pubH=s.tPub*2*s.days/60, carH=s.tCar*2*s.days/60; return {hourly, pubH, carH, savedH, savedWon: savedH*hourly/1e4, pubWon: pubH*hourly/1e4};}
+
+const pmt=(p,r,n)=>{r=r/100/12;return r===0?p/n:p*r/(1-Math.pow(1+r,-n));};
+function breakdown(s,cycle){
+  const b={pay:0,ins:0,tax:0,fuel:0,maint:0,park:8,etc:2};
+  const months=s.term*12, trade=cycle>0?s.price*0.40:0;
+  const insTax=()=>{b.ins=s.price*0.032/12;b.tax=Math.min(s.price*0.012,90)/12;};
+  if(s.buy==="inst"){b.pay=pmt(Math.max(s.price*1.07-trade,0),s.loan,months);insTax();}
+  else if(s.buy==="rent"){b.pay=s.price*(s.term>=5?0.0155:0.0175);}
+  else if(s.buy==="lease"){b.pay=s.price*(s.term>=5?0.0142:0.0162);insTax();}
+  else{insTax();}
+  const kmM=s.km/12;
+  b.fuel=s.fuel==="gas"?kmM/12*1650/1e4:s.fuel==="diesel"?kmM/14*1520/1e4:kmM/5.5*330/1e4;
+  b.maint=s.fuel==="ev"?2.5:4.5;
+  b.total=b.pay+b.ins+b.tax+b.fuel+b.maint+b.park+b.etc;
+  return b;
+}
+function simulate(s,years=30){
+  const r=s.ret/100/12; let spent=0,inv=0; const out=[]; const cm=s.term*12;
+  for(let m=0;m<years*12;m++){
+    const cycle=Math.floor(m/cm); let cost;
+    if(s.after==="keep"&&cycle>0){
+      // 이 차 한 대만: 할부·현금은 납부 끝 → 유지비만(노후 정비비 +2만), 렌트·리스는 반납 → 차 없음
+      if(s.buy==="rent"||s.buy==="lease"){cost=0;}
+      else{const b=breakdown(s,0);cost=b.total-b.pay+2;}
+    }else{
+      const b=breakdown(s,cycle); cost=b.total;
+      if(s.buy==="cash"&&m%cm===0) cost+=s.price*1.07-(cycle>0?s.price*0.40:0);
+    }
+    spent+=cost; const tv=s.useTime?timeValue(s).savedWon:0; inv=inv*(1+r)+Math.max(cost-s.alt-tv,0);
+    if((m+1)%12===0) out.push({year:m/12+1|0,spent,inv});
+  }
+  return out;
+}
+const fmt=n=>n.toLocaleString("ko-KR");
+const won=v=>{const n=Math.round(v); if(n>=1e4){const e=Math.floor(n/1e4),m=n%1e4; return m===0?`${e}억원`:`${e}억 ${fmt(m)}만원`;} return `${fmt(n)}만원`;};
+const wonS=v=>v>=1e4?`${(v/1e4).toFixed(1)}억`:`${Math.round(v)}만`;
+
+// ── UI
+const $=id=>document.getElementById(id);
+const presetEl=$("preset"); PRESETS.forEach((p,i)=>presetEl.add(new Option(`${p[0]}  ${fmt(p[1])}만`,i))); presetEl.add(new Option("직접 입력",-1)); presetEl.value=2;
+function seg(id,items,key,onSet){const el=$(id);el.innerHTML="";items.forEach(([v,l])=>{const b=document.createElement("button");b.textContent=l;b.className=S[key]==v?"on":"";b.onclick=()=>{S[key]=typeof S[key]==="number"?+v:v;render();};el.appendChild(b);});}
+presetEl.onchange=()=>{const i=+presetEl.value;if(i>=0){S.price=PRESETS[i][1];S.fuel=PRESETS[i][2];$("price").value=S.price;$("priceR").value=S.price;}render();};
+$("price").oninput=e=>{const v=+e.target.value.replace(/[^\d]/g,"");if(v>0){S.price=v;$("priceR").value=v;presetEl.value=-1;render();}};
+$("priceR").oninput=e=>{S.price=+e.target.value;$("price").value=S.price;presetEl.value=-1;render();};
+$("salary").oninput=e=>{const v=+e.target.value.replace(/[^\d]/g,"");if(v>0){S.salary=v;render();}};$("useTime").onchange=e=>{S.useTime=e.target.checked;render();};
+[["inf","inf",v=>`연 ${(+v).toFixed(1)}%`],["tPub","tPub",v=>`${v}분`],["tCar","tCar",v=>`${v}분`],["days","days",v=>`${v}일`],["loan","loan",v=>`${(+v).toFixed(1)}%`],["km","km",v=>`연 ${v/1000|0}천km`],["ret","ret",v=>`연 ${(+v).toFixed(1)}%`],["alt","alt",v=>`${v}만원`]].forEach(([id,key,f])=>{$(id).oninput=e=>{S[key]=+e.target.value;$(id+"V").textContent=f(e.target.value);render();};});
+
+let chart;
+function render(){
+  seg("buy",BUY,"buy"); seg("term",[[3,"3년"],[5,"5년"]],"term"); seg("fuel",FUEL,"fuel"); seg("after",[["keep","이 차 한 대만"],["repeat","계속 갈아탄다"]],"after");
+  $("afterHint").textContent=S.after==="keep"
+    ? (S.buy==="rent"||S.buy==="lease" ? `${S.term}년 납부 후 반납 → 이후 차 없이 산다 (양쪽 다 교통비만)` : `${S.term}년 납부 후엔 유지비만 내며 계속 탄다`)
+    : `${S.term}년마다 같은 가격대 차로 갈아탄다 (할부·현금은 헌 차 40%에 매각)`;
+  $("loanRow").style.display=S.buy==="inst"?"flex":"none";
+  const b=breakdown(S,0), sim=simulate(S), at=y=>sim[y-1];
+  $("monthly").textContent=won(b.total);
+  $("lump").hidden=S.buy!=="cash"; $("lump").textContent=`+ 처음에 ${won(S.price*1.07)} 목돈 (취득세 포함)`;
+  const rows=[["🚗 월납금 · 할부금",b.pay],["🛡️ 보험료",b.ins],["🏛️ 자동차세",b.tax],["⛽ 연료 · 충전",b.fuel],["🔧 정비 · 소모품",b.maint],["🅿️ 주차 · 통행 · 세차",b.park],["📎 기타",b.etc]].filter(r=>r[1]>0);
+  $("bd").innerHTML=rows.map(r=>`<div><span>${r[0]}</span><span>${won(r[1])}</span></div>`).join("");
+  $("tot").textContent=`${S.term}년 납부 기간 총 ${won(at(S.term).spent)}  ·  30년 누적 ${won(at(30).spent)}${S.after==='keep'?' (납부 끝난 뒤엔 유지비만)':' (계속 갈아탈 때)'}`;
+  $("tiles").innerHTML=[5,10,20,30].map(y=>`<div class="tile"><div class="y">${y}년 후</div><div class="n num">${wonS(at(y).inv)}</div><div class="s">지금 돈으로 <b style="color:var(--ink)">${wonS(real(at(y).inv,y))}</b> · 차엔 ${wonS(at(y).spent)}</div></div>`).join("");
+  const tv=timeValue(S);
+  $("hourly").textContent=`시급 ${fmt(Math.round(tv.hourly))}원`;
+  const net=b.total-tv.savedWon;
+  const verdict=tv.savedWon>=b.total
+    ? `🚗 이 경우엔 차가 남는 장사예요. 아끼는 시간 가치(${won(tv.savedWon)})가 월 비용(${won(b.total)})보다 큽니다.`
+    : `🩹 시간 가치를 빼도 매달 ${won(net)}이 더 나갑니다. 차는 편의를 사는 거지, 돈을 버는 건 아니에요.`;
+  $("tcard").innerHTML=`
+    <div><div class="k">뚜벅이 통근 시간 · 월</div><div class="n">${tv.pubH.toFixed(0)}시간</div><div class="s">시급으로 ${won(tv.pubWon)}어치</div></div>
+    <div><div class="k">자차로 아끼는 시간 · 월</div><div class="n" style="color:var(--green)">${tv.savedH.toFixed(0)}시간</div><div class="s">= ${won(tv.savedWon)} 가치</div></div>
+    <div><div class="k">시간 가치 뺀 실질 월 부담</div><div class="n" style="color:${net>0?'var(--red)':'var(--green)'}">${net>0?won(net):'0원'}</div><div class="s">30년 기준 통근에 ${Math.round(tv.pubH*12*30/24)}일 vs ${Math.round(tv.carH*12*30/24)}일</div></div>
+    <div class="verdict">${verdict}</div>`;
+  const y30=at(30);
+  $("punchN").textContent=won(y30.inv);
+  $("punchR").textContent=`물가상승률 ${S.inf.toFixed(1)}% 반영 시 지금 돈으로 ${won(real(y30.inv,30))}`;
+  $("punchS").textContent=`= 지금 그 차 ${Math.floor(y30.inv/S.price)}대  ·  차에 쓴 돈의 ${(y30.inv/Math.max(y30.spent,1)).toFixed(1)}배${S.useTime?'  ·  아낀 시간 가치 반영됨':''}`;
+  $("assume").textContent=`가정: 시급 = 연봉 ÷ 2,080시간 · 취득세 7% · 보험 차량가의 3.2%/년 · 렌트는 보험·세금 포함 · '한 대만' 모드는 납부 종료 후 정비비 월 +2만원`;
+  const labels=sim.map(p=>p.year), spent=sim.map(p=>Math.round(p.spent)), inv=sim.map(p=>Math.round(p.inv)), invR=sim.map(p=>Math.round(real(p.inv,p.year)));
+  if(!chart){
+    chart=new Chart($("c"),{type:"line",data:{labels,datasets:[
+      {label:"차에 쓴 돈",data:spent,borderColor:"#FF5247",borderWidth:2,pointRadius:0,tension:.3},
+      {label:"투자 자산",data:inv,borderColor:"#33E58C",backgroundColor:"rgba(51,229,140,.18)",fill:true,borderWidth:2.5,pointRadius:0,tension:.3},
+      {label:"투자 자산 (지금 돈 기준)",data:invR,borderColor:"#33E58C",borderDash:[5,4],borderWidth:1.5,pointRadius:0,tension:.3}]},
+      options:{responsive:true,maintainAspectRatio:false,animation:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${won(c.raw)}`,title:i=>`${i[0].label}년 후`}}},
+        scales:{x:{grid:{color:"#262A30"},ticks:{color:"#9AA0A8",font:{family:"IBM Plex Mono"},callback:(v,i)=>((i+1)%5===0?`${i+1}년`:"")},border:{color:"#262A30"}},
+                y:{grid:{color:"#262A30"},ticks:{color:"#9AA0A8",font:{family:"IBM Plex Mono"},callback:v=>wonS(v)},border:{color:"#262A30"}}},
+        interaction:{mode:"index",intersect:false}}});
+  } else { chart.data.labels=labels; chart.data.datasets[0].data=spent; chart.data.datasets[1].data=inv; chart.data.datasets[2].data=invR; chart.update(); }
+}
+render();
+</script>
+</head><body></body></html>
