@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>이응 · 카카오 로그인</title>
+<style>
+  html,body{height:100%;margin:0;background:#F2F5FA;color:#0A1021;font-family:-apple-system,"Apple SD Gothic Neo","Malgun Gothic",sans-serif}
+  main{min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:32px;text-align:center;box-sizing:border-box}
+  .ring{width:54px;height:54px;border-radius:50%;border:13px solid #2563FF;position:relative}
+  .ring::after{content:"";position:absolute;right:-22px;top:-24px;width:18px;height:18px;border-radius:50%;background:#3D9FF6}
+  h1{font-size:21px;margin:8px 0 0;font-weight:800}
+  p{font-size:15px;color:#667085;margin:0;line-height:1.6}
+  a{display:none;margin-top:10px;background:#2563FF;color:#fff;text-decoration:none;font-weight:800;font-size:17px;padding:17px 30px;border-radius:16px}
+</style>
+</head>
+<body>
+<main>
+  <div class="ring" aria-hidden="true"></div>
+  <h1 id="t">로그인 정보를 확인하고 있어요</h1>
+  <p id="d">잠시만 기다려주세요.</p>
+  <a id="go" href="#">이응 앱으로 돌아가기</a>
+</main>
+<script>
+(function () {
+  var p = new URLSearchParams(location.search);
+  var code = p.get('code') || '', state = p.get('state') || '', err = p.get('error') || '';
+  function q(prefix) {
+    var o = [];
+    if (code) o.push(prefix + 'code=' + encodeURIComponent(code));
+    if (state) o.push(prefix + 'state=' + encodeURIComponent(state));
+    if (err) o.push(prefix + 'error=' + encodeURIComponent(err));
+    return o.join('&');
+  }
+  if (!code && !err) {
+    document.getElementById('t').textContent = '잘못된 접근이에요';
+    document.getElementById('d').textContent = '이응 앱이나 웹에서 다시 로그인해주세요.';
+    return;
+  }
+  if (state.indexOf('app.') === 0) {
+    // 앱에서 시작한 로그인 → 앱으로 되돌려 보냄
+    var url = 'eeungv2://kakao?' + q('');
+    var btn = document.getElementById('go');
+    btn.href = url; btn.style.display = 'inline-block';
+    document.getElementById('t').textContent = '로그인이 확인됐어요';
+    document.getElementById('d').textContent = '앱으로 자동으로 돌아가지 않으면 아래 버튼을 눌러주세요.';
+    location.href = url;
+  } else {
+    // 웹에서 시작한 로그인 → 같은 사이트의 첫 화면으로
+    location.replace('./?' + q('kakao_'));
+  }
+})();
+</script>
+</body>
+</html>
