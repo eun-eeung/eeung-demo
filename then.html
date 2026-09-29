@@ -1,0 +1,544 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#2563FF">
+<meta property="og:title" content="그때 바꿨다면 · 이응">
+<meta property="og:description" content="지나간 장기렌트 견적으로 그때 갈아탔다면 지금 매달 얼마를 내고 있을지 계산해 봐요 (예시 데이터)">
+<link rel="icon" type="image/png" href="favicon.png">
+<title>그때 바꿨다면</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap">
+<style>
+/* 이응 앱과 같은 한 줄 세로 화면(폰 폭). 위에서부터: 내 차 → 그때 고르기 → 결과 → 놓친 순간 → 지금 바꾸면 */
+:root {
+  --page: #F2F5FA; --surface: #FFFFFF; --sunken: #F4F6FB; --line: #E7EBF3;
+  --ink: #0A1021; --ink2: #2B3245; --muted: #667085; --faint: #98A2B5;
+  --primary: #2563FF; --primary-soft: #EAF0FF; --primary-deep: #1743C4;
+  --series: #2563FF; --series-fill: rgba(37, 99, 255, 0.10);
+  --good: #0B8A5C; --good-soft: #E3F6EE;
+  --warn: #C2560C; --warn-soft: #FFF1E2;
+  --shadow: 0 4px 14px rgba(27, 43, 85, 0.06);
+  --font: "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+  --r-lg: 24px; --r-md: 16px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --page: #0B1020; --surface: #141B2D; --sunken: #1A2338; --line: #26304A;
+    --ink: #EEF2FA; --ink2: #CDD5E5; --muted: #98A3BB; --faint: #6F7A93;
+    --primary: #5C8BFF; --primary-soft: #1C2A4D; --primary-deep: #A9C1FF;
+    --series: #5C8BFF; --series-fill: rgba(92, 139, 255, 0.14);
+    --good: #3CCB8E; --good-soft: #12332A;
+    --warn: #FF9A52; --warn-soft: #3A2615;
+    --shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --page: #0B1020; --surface: #141B2D; --sunken: #1A2338; --line: #26304A;
+  --ink: #EEF2FA; --ink2: #CDD5E5; --muted: #98A3BB; --faint: #6F7A93;
+  --primary: #5C8BFF; --primary-soft: #1C2A4D; --primary-deep: #A9C1FF;
+  --series: #5C8BFF; --series-fill: rgba(92, 139, 255, 0.14);
+  --good: #3CCB8E; --good-soft: #12332A;
+  --warn: #FF9A52; --warn-soft: #3A2615;
+  --shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--page); color: var(--ink); font-family: var(--font); font-size: 16px; line-height: 1.5; margin: 0; word-break: keep-all; -webkit-font-smoothing: antialiased; }
+.app { max-width: 480px; margin: 0 auto; padding-inline: 20px; padding-block: 28px 56px; display: flex; flex-direction: column; gap: 20px; }
+h1, h2, h3, p { margin: 0; }
+h1, h2 { text-wrap: balance; letter-spacing: -0.02em; }
+.num { font-variant-numeric: tabular-nums; }
+button { font: inherit; color: inherit; }
+button:focus-visible, input:focus-visible { outline: 3px solid var(--primary); outline-offset: 2px; }
+
+.head { display: flex; flex-direction: column; gap: 10px; }
+.brand { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 700; color: var(--muted); }
+.brand svg { width: 22px; height: 22px; }
+h1 { font-size: 32px; font-weight: 900; line-height: 1.2; }
+.lede { font-size: 16px; color: var(--muted); }
+.tag { align-self: flex-start; font-size: 12.5px; font-weight: 700; color: var(--muted); background: var(--sunken); border-radius: 8px; padding: 4px 10px; }
+
+.card { background: var(--surface); border-radius: var(--r-lg); padding: 24px; box-shadow: var(--shadow); display: flex; flex-direction: column; gap: 16px; }
+.eyebrow { font-size: 13px; font-weight: 700; color: var(--muted); letter-spacing: 0.02em; }
+.section-title { font-size: 21px; font-weight: 900; }
+.sub { font-size: 14px; color: var(--muted); }
+
+.mine { flex-direction: row; align-items: center; gap: 16px; }
+.mine-ic { width: 52px; height: 52px; border-radius: 18px; background: var(--primary-soft); color: var(--primary); display: grid; place-items: center; flex: none; }
+.mine-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+.mine-name { font-size: 18px; font-weight: 800; }
+.mine-meta { font-size: 14px; color: var(--muted); }
+.mine-val { text-align: right; display: flex; flex-direction: column; gap: 2px; }
+.mine-val b { font-size: 18px; font-weight: 800; }
+.mine-val span { font-size: 12.5px; color: var(--muted); }
+
+.chips { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 2px; scrollbar-width: none; }
+.chips::-webkit-scrollbar { display: none; }
+.chip { flex: none; border: 0; background: var(--surface); color: var(--muted); font-size: 15px; font-weight: 700; padding: 11px 18px; border-radius: 999px; cursor: pointer; box-shadow: var(--shadow); }
+.chip[aria-pressed="true"] { background: var(--primary); color: #fff; }
+
+.chart-wrap { position: relative; }
+.chart { width: 100%; height: auto; display: block; touch-action: pan-y; cursor: crosshair; }
+.chart .grid { stroke: var(--line); stroke-width: 1; }
+.chart .axis { fill: var(--faint); font-size: 11px; font-family: var(--font); }
+.chart .ref { stroke: var(--muted); stroke-width: 1.5; stroke-dasharray: 5 5; }
+.chart .ref-label { fill: var(--muted); font-size: 11px; font-weight: 700; font-family: var(--font); }
+.chart .line { fill: none; stroke: var(--series); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+.chart .area { fill: var(--series-fill); }
+.chart .sel { fill: var(--series); stroke: var(--surface); stroke-width: 3; }
+.chart .now { fill: var(--surface); stroke: var(--series); stroke-width: 2; }
+.chart .cross { stroke: var(--faint); stroke-width: 1; }
+.tip { position: absolute; pointer-events: none; background: var(--ink); color: var(--page); font-size: 13px; line-height: 1.45; padding: 8px 12px; border-radius: 10px; white-space: nowrap; transform: translate(-50%, -100%); }
+.legend { display: flex; flex-wrap: wrap; gap: 16px; font-size: 13px; color: var(--muted); }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.sw-line { width: 16px; height: 2px; background: var(--series); border-radius: 2px; }
+.sw-ref { width: 16px; border-top: 2px dashed var(--muted); }
+
+.when { display: flex; flex-direction: column; gap: 10px; }
+.when-row { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+.when-label { font-size: 18px; font-weight: 800; }
+.when-hint { font-size: 13.5px; color: var(--muted); }
+input[type="range"] { width: 100%; accent-color: var(--primary); height: 28px; }
+.event { font-size: 14px; color: var(--primary-deep); background: var(--primary-soft); border-radius: 12px; padding: 10px 14px; }
+
+.seg { display: flex; background: var(--sunken); border-radius: var(--r-md); padding: 4px; gap: 4px; }
+.seg button { flex: 1; border: 0; background: transparent; border-radius: 12px; padding: 12px 8px; font-size: 15px; font-weight: 700; color: var(--muted); cursor: pointer; }
+.seg button[aria-pressed="true"] { background: var(--surface); color: var(--ink); box-shadow: var(--shadow); }
+.toggle-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; font-size: 15px; color: var(--ink2); }
+.switch { position: relative; width: 50px; height: 30px; border: 0; border-radius: 999px; background: var(--line); cursor: pointer; flex: none; }
+.switch::after { content: ""; position: absolute; top: 3px; left: 3px; width: 24px; height: 24px; border-radius: 50%; background: #fff; transition: transform .18s; }
+.switch[aria-checked="true"] { background: var(--primary); }
+.switch[aria-checked="true"]::after { transform: translateX(20px); }
+
+.result { gap: 18px; }
+.verdict { display: flex; flex-direction: column; gap: 6px; }
+.verdict-q { font-size: 15px; color: var(--muted); }
+.verdict-big { font-size: 34px; font-weight: 900; line-height: 1.15; letter-spacing: -0.02em; }
+.verdict-big.good { color: var(--good); }
+.verdict-big.warn { color: var(--warn); }
+.pill { align-self: flex-start; display: inline-flex; align-items: center; gap: 6px; font-size: 13.5px; font-weight: 800; border-radius: 999px; padding: 6px 12px; }
+.pill.good { background: var(--good-soft); color: var(--good); }
+.pill.warn { background: var(--warn-soft); color: var(--warn); }
+.rows { display: flex; flex-direction: column; border-top: 1px solid var(--line); }
+.r { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding-block: 14px; border-bottom: 1px solid var(--line); }
+.r:last-child { border-bottom: 0; }
+.r-k { font-size: 15px; color: var(--ink2); }
+.r-k small { display: block; font-size: 12.5px; color: var(--muted); margin-top: 2px; }
+.r-v { font-size: 16px; font-weight: 800; text-align: right; flex: none; }
+.r.total .r-k { font-weight: 800; color: var(--ink); }
+.r.total .r-v { font-size: 18px; }
+
+.vals { display: flex; flex-direction: column; gap: 14px; }
+.val-row { display: grid; grid-template-columns: 96px 1fr auto; align-items: center; gap: 12px; }
+.val-name { font-size: 14px; color: var(--ink2); font-weight: 700; }
+.bar { height: 12px; background: var(--sunken); border-radius: 6px; overflow: hidden; }
+.bar i { display: block; height: 100%; border-radius: 6px; }
+.val-num { font-size: 15px; font-weight: 800; }
+
+.miss { display: flex; flex-direction: column; }
+.miss button { display: flex; align-items: center; gap: 14px; width: 100%; text-align: left; border: 0; background: transparent; padding-block: 16px; border-bottom: 1px solid var(--line); cursor: pointer; }
+.miss button:last-child { border-bottom: 0; }
+.miss-rank { width: 36px; height: 36px; border-radius: 12px; background: var(--primary-soft); color: var(--primary); font-weight: 900; display: grid; place-items: center; flex: none; }
+.miss-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.miss-t { font-size: 15.5px; font-weight: 800; }
+.miss-s { font-size: 13.5px; color: var(--muted); }
+.miss-v { font-size: 16px; font-weight: 900; color: var(--good); flex: none; }
+
+.now-card { background: var(--ink); color: var(--page); }
+.now-card .eyebrow, .now-card .sub { color: color-mix(in srgb, var(--page) 70%, transparent); }
+.now-big { font-size: 26px; font-weight: 900; line-height: 1.3; }
+.btn { border: 0; border-radius: var(--r-md); height: 58px; font-size: 16px; font-weight: 800; cursor: pointer; width: 100%; }
+.btn.primary { background: var(--primary); color: #fff; }
+.btn.ghost { background: color-mix(in srgb, var(--page) 12%, transparent); color: var(--page); }
+.btn[aria-pressed="true"] { background: var(--good); color: #fff; }
+
+details.table { font-size: 14px; color: var(--muted); }
+details.table summary { cursor: pointer; font-weight: 700; }
+.tbl-wrap { overflow-x: auto; margin-top: 10px; }
+table { border-collapse: collapse; width: 100%; font-size: 13.5px; }
+th, td { text-align: right; padding: 7px 8px; border-bottom: 1px solid var(--line); font-variant-numeric: tabular-nums; white-space: nowrap; }
+th:first-child, td:first-child { text-align: left; }
+th { color: var(--muted); font-weight: 700; }
+td { color: var(--ink2); }
+
+.foot { font-size: 12.5px; color: var(--faint); line-height: 1.7; }
+@media (prefers-reduced-motion: reduce) { .switch::after { transition: none; } }
+</style>
+</head>
+<body>
+
+<main class="app">
+  <header class="head">
+    <div class="brand">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="13.5" r="7.2" fill="none" stroke="var(--primary)" stroke-width="4.2"/><circle cx="19.6" cy="4.8" r="2.4" fill="var(--primary)"/></svg>
+      이응
+    </div>
+    <h1>그때 바꿨다면</h1>
+    <p class="lede">지나간 견적으로 다시 계산해 봐요. 그때 갈아탔다면 지금 매달 얼마를 내고 있을지.</p>
+    <span class="tag">예시 데이터 · 실제 견적과 다를 수 있어요</span>
+  </header>
+
+  <section class="card mine" aria-label="지금 내 차">
+    <div class="mine-ic" aria-hidden="true">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 11l1.4-4.2a2 2 0 0 1 1.9-1.4h7.4a2 2 0 0 1 1.9 1.4L19 11"/><rect x="3.5" y="11" width="17" height="6.5" rx="2"/><path d="M6.2 17.5v1.7M17.8 17.5v1.7"/></svg>
+    </div>
+    <div class="mine-main">
+      <span class="mine-name">셀토스 프레스티지</span>
+      <span class="mine-meta num">장기렌트 · 2025.03 계약 · 18/60회</span>
+      <span class="mine-meta num" id="mine-cost"></span>
+    </div>
+    <div class="mine-val">
+      <b class="num">1,850만원</b>
+      <span>지금 시세</span>
+    </div>
+  </section>
+
+  <section class="card" aria-labelledby="t-pick">
+    <div>
+      <h2 class="section-title" id="t-pick">어떤 차로 바꿨다면?</h2>
+      <p class="sub">그 차의 지난 월납금을 달마다 보여드려요</p>
+    </div>
+    <div class="chips" role="group" aria-label="비교할 차" id="chips"></div>
+
+    <div class="chart-wrap">
+      <svg class="chart" id="chart" viewBox="0 0 360 210" role="img" aria-label="월 부담 추이"></svg>
+      <div class="tip" id="tip" hidden></div>
+    </div>
+    <div class="legend">
+      <span><i class="sw-line"></i><b id="lg-car">그 차</b>의 월 부담</span>
+      <span><i class="sw-ref"></i>지금 내 월 부담</span>
+    </div>
+
+    <div class="when">
+      <div class="when-row">
+        <span class="when-label num" id="when-label"></span>
+        <span class="when-hint">차트를 누르거나 밀어서 고르세요</span>
+      </div>
+      <input type="range" id="when" min="0" max="17" step="1" value="9" aria-label="바꿨을 시점">
+      <p class="event" id="event" hidden></p>
+    </div>
+
+    <div class="seg" role="group" aria-label="갈아타는 방법" id="method">
+      <button type="button" data-m="transfer" aria-pressed="true">승계로 넘기고</button>
+      <button type="button" data-m="cancel" aria-pressed="false">중도해지하고</button>
+    </div>
+    <div class="toggle-row">
+      <span>연료·충전비까지 포함</span>
+      <button type="button" class="switch" id="fuel" role="switch" aria-checked="true" aria-label="연료·충전비 포함"></button>
+    </div>
+  </section>
+
+  <section class="card result" aria-live="polite" aria-labelledby="t-result">
+    <div class="verdict">
+      <p class="verdict-q" id="t-result"></p>
+      <p class="verdict-big num" id="verdict-big"></p>
+      <span class="pill" id="verdict-pill"></span>
+    </div>
+    <div class="rows" id="rows"></div>
+  </section>
+
+  <section class="card" aria-labelledby="t-val">
+    <div>
+      <h2 class="section-title" id="t-val">차 값은 어떻게 됐을까</h2>
+      <p class="sub">만기에 인수할지 판단할 때 기준이 되는 시세예요</p>
+    </div>
+    <div class="vals" id="vals"></div>
+  </section>
+
+  <section class="card" aria-labelledby="t-miss">
+    <div>
+      <h2 class="section-title" id="t-miss">놓친 순간</h2>
+      <p class="sub">지금까지 합계로 가장 아꼈을 시점이에요</p>
+    </div>
+    <div class="miss" id="miss"></div>
+  </section>
+
+  <section class="card now-card" aria-labelledby="t-now">
+    <p class="eyebrow" id="t-now">그럼 지금 바꾸면?</p>
+    <p class="now-big" id="now-big"></p>
+    <p class="sub" id="now-sub"></p>
+    <button type="button" class="btn primary" id="btn-quote">지금 견적 보기</button>
+    <button type="button" class="btn ghost" id="btn-alert" aria-pressed="false">내 월 부담보다 싸지면 알려주기</button>
+  </section>
+
+  <details class="table">
+    <summary>달마다 견적 표로 보기</summary>
+    <div class="tbl-wrap"><table id="tbl"></table></div>
+  </details>
+
+  <p class="foot">
+    모든 숫자는 예시예요. 월 부담 = 월납금(5년·선납 0%·연 2만km 장기렌트) + 연료·충전비.
+    승계 비용은 중개·명의이전 약 33만원, 중도해지 위약금은 남은 렌트료 × 요율(1년 이내 40%, 2년 이내 30%)로 계산했어요. 실제 요율은 계약서마다 달라요.
+    차 시세는 출고가 대비 감가를 단순화한 추정치예요.
+  </p>
+</main>
+
+<script>
+(function () {
+  // ── 예시 데이터 ─────────────────────────────────────────────
+  var START = { y: 2025, m: 3 };          // 계약 시작 = t0
+  var NOW_T = 18;                         // 2026.09
+  var TERM = 60;
+  var MINE = { rent: 401070, fuel: 143000, value: 18500000 };
+  var TRANSFER_FEE = 330000;
+  // 월납금 = 지금 견적 × 그 달 계수 (금리·프로모션·보조금 반영)
+  var CARS = [
+    { id: 'ev3', name: 'EV3', now: 449350, fuel: 58000, ev: true,
+      f: [1.06,1.06,1.055,1.05,1.05,1.045,1.04,1.035,1.02,0.872,1.07,1.075,0.93,0.99,0.995,1,1,1,1],
+      ev_: { 9: '연말 특가로 월납금이 가장 낮았던 달이에요', 10: '보조금 발표 전이라 견적이 올랐어요', 11: '보조금 발표 전이라 견적이 올랐어요', 12: '보조금이 확정되며 다시 내려갔어요' } },
+    { id: 'seltoshev', name: '셀토스 하이브리드', now: 410740, fuel: 98000,
+      f: [1.05,1.045,1.04,1.035,1.035,1.03,1.03,1.025,1.02,1.015,1.03,0.923,0.99,0.995,1,1,1,1,1],
+      ev_: { 10: '연식 변경으로 소폭 올랐어요', 11: '금리 인하 프로모션이 있던 달이에요' } },
+    { id: 'casperev', name: '캐스퍼 일렉트릭', now: 305150, fuel: 48000, ev: true,
+      f: [1.085,1.075,1.07,1.06,1.055,1.05,1.045,1.03,0.945,0.99,1.105,1.11,1.02,1.015,1.01,1.005,1,1,1],
+      ev_: { 8: '연말 프로모션이 먼저 시작된 달이에요', 10: '보조금 발표 전이라 견적이 올랐어요', 11: '보조금 발표 전이라 견적이 올랐어요' } },
+    { id: 'sorentohev', name: '쏘렌토 하이브리드', now: 527890, fuel: 128000,
+      f: [1.07,1.065,1.06,1.055,1.05,1.05,1.045,1.04,1.03,0.985,1.03,1.03,1.01,1.005,1,1,1,1,1],
+      ev_: { 9: '연말 프로모션이 있었지만 내 월 부담보다는 비쌌어요' } }
+  ];
+
+  var state = { car: 'ev3', t: 9, method: 'transfer', fuel: true };
+  try {
+    var saved = JSON.parse(localStorage.getItem('then.state') || 'null');
+    if (saved && CARS.some(function (c) { return c.id === saved.car; })) state = Object.assign(state, saved);
+  } catch (e) {}
+  var alertOn = false;
+  try { alertOn = localStorage.getItem('then.alert') === '1'; } catch (e) {}
+
+  // ── 계산 ────────────────────────────────────────────────────
+  var car = function () { return CARS.filter(function (c) { return c.id === state.car; })[0]; };
+  var rent = function (c, t) { return Math.round(c.now * c.f[t] / 10) * 10; };
+  var burden = function (c, t) { return rent(c, t) + (state.fuel ? c.fuel : 0); };
+  var mineBurden = function () { return MINE.rent + (state.fuel ? MINE.fuel : 0); };
+  function switchCost(t, method) {
+    if (t === 0) return 0;                              // 계약할 때 골랐다면 비용 없음
+    if (method === 'transfer') return TRANSFER_FEE;
+    var remain = TERM - t, rate = t < 12 ? 0.4 : t < 24 ? 0.3 : 0.2;
+    return Math.round(remain * MINE.rent * rate);
+  }
+  function result(c, t, method) {
+    var monthly = burden(c, t) - mineBurden();
+    var months = NOW_T - t;
+    var cost = switchCost(t, method);
+    return { monthly: monthly, months: months, sum: monthly * months, cost: cost, net: monthly * months + cost };
+  }
+  function carValue(c, t) {
+    var held = NOW_T - t, msrp = c.now * 62;
+    var drop = 1 - MINE.value / 24866000;   // 내 차(출고가 2,487만원)의 18개월 감가율
+    var r = 1 - drop * (held / 18) * (c.ev ? 1.25 : 1);
+    return Math.round(msrp * r / 10000) * 10000;
+  }
+
+  // ── 표기 ────────────────────────────────────────────────────
+  // 받침에 맞는 조사 (을/를, 으로/로, 은/는)
+  function jong(word) {
+    var ch = word.trim().slice(-1), digits = { '0': 1, '1': 8, '2': 0, '3': 16, '4': 0, '5': 0, '6': 1, '7': 8, '8': 8, '9': 0 };
+    if (ch in digits) return digits[ch];
+    var code = ch.charCodeAt(0) - 0xAC00;
+    return code >= 0 && code <= 11171 ? code % 28 : 0;
+  }
+  var eul = function (w) { return w + (jong(w) ? '을' : '를'); };
+  var ro = function (w) { var j = jong(w); return w + (j && j !== 8 ? '으로' : '로'); };
+  var eun = function (w) { return w + (jong(w) ? '은' : '는'); };
+  var won = function (n) { return Math.abs(n).toLocaleString('ko-KR') + '원'; };
+  var man = function (n) {
+    var a = Math.abs(n);
+    if (a < 100000) return a.toLocaleString('ko-KR') + '원';
+    var v = a / 10000;
+    return (v >= 100 ? Math.round(v).toLocaleString('ko-KR') : (Math.round(v * 10) / 10).toLocaleString('ko-KR')) + '만원';
+  };
+  var ym = function (t) {
+    var m = START.m - 1 + t, y = START.y + Math.floor(m / 12);
+    return { y: y, m: (m % 12) + 1 };
+  };
+  var ymShort = function (t) { var d = ym(t); return String(d.y).slice(2) + '.' + String(d.m).padStart(2, '0'); };
+  var ymLong = function (t) { var d = ym(t); return d.y + '년 ' + d.m + '월'; };
+
+  // ── 차트 ────────────────────────────────────────────────────
+  var svg = document.getElementById('chart');
+  var tip = document.getElementById('tip');
+  var W = 360, H = 210, P = { l: 44, r: 14, t: 18, b: 28 };
+  var NS = 'http://www.w3.org/2000/svg';
+  var X, Y, lo, hi;
+  function el(tag, attrs, text) {
+    var e = document.createElementNS(NS, tag);
+    for (var k in attrs) e.setAttribute(k, attrs[k]);
+    if (text != null) e.textContent = text;
+    return e;
+  }
+  function drawChart() {
+    var c = car(), vals = [];
+    for (var t = 0; t <= NOW_T; t++) vals.push(burden(c, t));
+    var mb = mineBurden();
+    var all = vals.concat([mb]);
+    var step = 50000;
+    lo = Math.floor(Math.min.apply(null, all) * 0.97 / step) * step;
+    hi = Math.ceil(Math.max.apply(null, all) * 1.02 / step) * step;
+    X = function (t) { return P.l + (W - P.l - P.r) * t / NOW_T; };
+    Y = function (v) { return P.t + (H - P.t - P.b) * (1 - (v - lo) / (hi - lo)); };
+    svg.textContent = '';
+    // 눈금 (최대 4개)
+    var span = hi - lo, tick = span <= 150000 ? 50000 : span <= 300000 ? 100000 : 200000;
+    for (var v = Math.ceil(lo / tick) * tick; v <= hi; v += tick) {
+      svg.appendChild(el('line', { class: 'grid', x1: P.l, x2: W - P.r, y1: Y(v), y2: Y(v) }));
+      svg.appendChild(el('text', { class: 'axis', x: P.l - 8, y: Y(v) + 4, 'text-anchor': 'end' }, Math.round(v / 10000) + '만'));
+    }
+    [0, 6, 12, 18].forEach(function (t) {
+      svg.appendChild(el('text', { class: 'axis', x: X(t), y: H - 8, 'text-anchor': t === 0 ? 'start' : t === NOW_T ? 'end' : 'middle' }, t === NOW_T ? '지금' : ymShort(t)));
+    });
+    // 면적 + 선
+    var d = vals.map(function (v, i) { return (i ? 'L' : 'M') + X(i).toFixed(1) + ' ' + Y(v).toFixed(1); }).join(' ');
+    svg.appendChild(el('path', { class: 'area', d: d + ' L' + X(NOW_T) + ' ' + (H - P.b) + ' L' + X(0) + ' ' + (H - P.b) + ' Z' }));
+    // 내 월 부담 기준선
+    svg.appendChild(el('line', { class: 'ref', x1: P.l, x2: W - P.r, y1: Y(mb), y2: Y(mb) }));
+    var refAbove = Y(mb) - P.t > 18;
+    svg.appendChild(el('text', { class: 'ref-label', x: W - P.r, y: refAbove ? Y(mb) - 6 : Y(mb) + 14, 'text-anchor': 'end' }, '내 월 부담 ' + man(mb)));
+    svg.appendChild(el('path', { class: 'line', d: d }));
+    // 지금 점, 고른 점
+    svg.appendChild(el('circle', { class: 'now', cx: X(NOW_T), cy: Y(vals[NOW_T]), r: 4 }));
+    var cross = el('line', { class: 'cross', x1: 0, x2: 0, y1: P.t, y2: H - P.b, visibility: 'hidden' });
+    svg.appendChild(cross);
+    svg.appendChild(el('circle', { class: 'sel', cx: X(state.t), cy: Y(vals[state.t]), r: 6.5 }));
+    svg._cross = cross; svg._vals = vals;
+  }
+  function idxFromEvent(e) {
+    var r = svg.getBoundingClientRect();
+    var x = (e.clientX - r.left) / r.width * W;
+    return Math.max(0, Math.min(NOW_T, Math.round((x - P.l) / (W - P.l - P.r) * NOW_T)));
+  }
+  svg.addEventListener('pointermove', function (e) {
+    var i = idxFromEvent(e), r = svg.getBoundingClientRect(), s = r.width / W;
+    var v = svg._vals[i], diff = v - mineBurden();
+    svg._cross.setAttribute('x1', X(i)); svg._cross.setAttribute('x2', X(i)); svg._cross.setAttribute('visibility', 'visible');
+    tip.hidden = false;
+    tip.innerHTML = '<b>' + (i === NOW_T ? '지금' : ymLong(i)) + '</b><br>월 ' + won(v) + ' · 나보다 ' + (diff <= 0 ? won(diff) + ' 적게' : won(diff) + ' 많이');
+    var left = Math.max(80, Math.min(r.width - 80, X(i) * s));
+    tip.style.left = left + 'px';
+    tip.style.top = (Y(v) * s - 12) + 'px';
+  });
+  svg.addEventListener('pointerleave', function () { tip.hidden = true; svg._cross.setAttribute('visibility', 'hidden'); });
+  svg.addEventListener('click', function (e) { var i = idxFromEvent(e); if (i < NOW_T) { state.t = i; render(); } });
+
+  // ── 화면 갱신 ───────────────────────────────────────────────
+  function render() {
+    try { localStorage.setItem('then.state', JSON.stringify(state)); } catch (e) {}
+    var c = car(), t = state.t, res = result(c, t, state.method);
+    document.getElementById('mine-cost').textContent = '월 부담 ' + won(mineBurden()) + (state.fuel ? ' (월납금 ' + man(MINE.rent) + ' + 주유 ' + man(MINE.fuel) + ')' : ' (월납금)');
+    // 칩
+    var chips = document.getElementById('chips');
+    chips.innerHTML = '';
+    CARS.forEach(function (x) {
+      var b = document.createElement('button');
+      b.type = 'button'; b.className = 'chip'; b.textContent = x.name;
+      b.setAttribute('aria-pressed', x.id === state.car ? 'true' : 'false');
+      b.onclick = function () { state.car = x.id; render(); };
+      chips.appendChild(b);
+    });
+    document.getElementById('lg-car').textContent = c.name;
+    drawChart();
+    // 시점
+    var slider = document.getElementById('when');
+    slider.value = t;
+    document.getElementById('when-label').textContent = (t === 0 ? '계약할 때 (' + ymLong(0) + ')' : ymLong(t) + ' · ' + (NOW_T - t) + '개월 전');
+    var ev = document.getElementById('event'), note = c.ev_ && c.ev_[t];
+    ev.hidden = !note; ev.textContent = note || '';
+    // 방법
+    var method = document.getElementById('method');
+    method.hidden = t === 0;
+    method.querySelectorAll('button').forEach(function (b) { b.setAttribute('aria-pressed', b.dataset.m === state.method ? 'true' : 'false'); });
+    document.getElementById('fuel').setAttribute('aria-checked', state.fuel ? 'true' : 'false');
+
+    // 결과
+    var good = res.net < 0;
+    document.getElementById('t-result').textContent =
+      (t === 0 ? '계약할 때 ' + eul(c.name) + ' 골랐다면' : ymLong(t) + '에 ' + ro(c.name) + ' 바꿨다면') + ', 지금까지';
+    var big = document.getElementById('verdict-big');
+    big.textContent = man(res.net) + (good ? ' 아꼈어요' : ' 더 냈어요');
+    big.className = 'verdict-big num ' + (good ? 'good' : 'warn');
+    var pill = document.getElementById('verdict-pill');
+    pill.className = 'pill ' + (res.monthly < 0 ? 'good' : 'warn');
+    pill.textContent = (res.monthly < 0 ? '▼ 매달 ' + won(res.monthly) + ' 덜 내요' : '▲ 매달 ' + won(res.monthly) + ' 더 내요');
+    var rows = [
+      ['그때 견적', '월납금' + (state.fuel ? ' + 연료·충전비' : ''), won(burden(c, t)), ''],
+      ['지금 내 월 부담', '셀토스 프레스티지', won(mineBurden()), ''],
+      ['한 달 차이', '그때 차 − 내 차', (res.monthly <= 0 ? '−' : '+') + won(res.monthly), res.monthly <= 0 ? 'good' : 'warn'],
+      ['지난 ' + res.months + '개월 합계', won(res.monthly) + ' × ' + res.months + '개월', (res.sum <= 0 ? '−' : '+') + man(res.sum), res.sum <= 0 ? 'good' : 'warn']
+    ];
+    if (t > 0) rows.push([state.method === 'transfer' ? '승계 비용' : '중도해지 위약금', state.method === 'transfer' ? '중개·명의이전 (예시)' : '남은 ' + (TERM - t) + '개월 렌트료 × ' + (t < 12 ? '40%' : '30%'), '+' + man(res.cost), 'warn']);
+    rows.push(['합계', '지금까지 기준', (res.net <= 0 ? '−' : '+') + man(res.net), res.net <= 0 ? 'good' : 'warn', true]);
+    document.getElementById('rows').innerHTML = rows.map(function (r) {
+      var col = r[3] === 'good' ? 'var(--good)' : r[3] === 'warn' ? 'var(--warn)' : 'var(--ink)';
+      return '<div class="r' + (r[4] ? ' total' : '') + '"><span class="r-k">' + r[0] + '<small>' + r[1] + '</small></span><span class="r-v num" style="color:' + col + '">' + r[2] + '</span></div>';
+    }).join('');
+
+    // 차 값
+    var cv = carValue(c, t), max = Math.max(cv, MINE.value);
+    document.getElementById('vals').innerHTML =
+      '<div class="val-row"><span class="val-name">내 차</span><span class="bar"><i style="width:' + (MINE.value / max * 100) + '%;background:var(--faint)"></i></span><span class="val-num num">' + man(MINE.value) + '</span></div>' +
+      '<div class="val-row"><span class="val-name">' + c.name + '</span><span class="bar"><i style="width:' + (cv / max * 100) + '%;background:var(--series)"></i></span><span class="val-num num">' + man(cv) + '</span></div>' +
+      '<p class="sub">' + (NOW_T - t) + '개월 탔다고 가정한 추정 시세예요' + (c.ev ? '. 전기차는 감가가 더 빠르게 잡혀 있어요.' : '.') + '</p>';
+
+    // 놓친 순간 (승계 기준, 지금까지 합계가 가장 좋은 3개)
+    var cands = [];
+    CARS.forEach(function (x) {
+      for (var i = 0; i < NOW_T; i++) {
+        var r = result(x, i, 'transfer');
+        cands.push({ car: x, t: i, net: r.net, monthly: r.monthly });
+      }
+    });
+    cands.sort(function (a, b) { return a.net - b.net; });
+    var picked = [], seen = {};
+    cands.forEach(function (m) { if (picked.length < 3 && m.net < 0 && !seen[m.car.id]) { seen[m.car.id] = 1; picked.push(m); } });
+    document.getElementById('miss').innerHTML = picked.map(function (m, k) {
+      return '<button type="button" data-car="' + m.car.id + '" data-t="' + m.t + '"><span class="miss-rank num">' + (k + 1) + '</span><span class="miss-main"><span class="miss-t">' + (m.t === 0 ? '계약할 때' : ymLong(m.t)) + ' · ' + m.car.name + '</span><span class="miss-s">매달 ' + won(m.monthly) + ' 덜 냈을 거예요</span></span><span class="miss-v num">−' + man(m.net) + '</span></button>';
+    }).join('') || '<p class="sub">이 조건에서는 바꿔서 아꼈을 시점이 없어요.</p>';
+    document.querySelectorAll('#miss button').forEach(function (b) {
+      b.onclick = function () { state.car = b.dataset.car; state.t = +b.dataset.t; state.method = 'transfer'; render(); window.scrollTo({ top: 0, behavior: 'smooth' }); };
+    });
+
+    // 지금 바꾸면
+    var nowM = burden(c, NOW_T) - mineBurden();
+    var costNow = state.method === 'transfer' ? TRANSFER_FEE : switchCost(NOW_T, 'cancel');
+    var nb = document.getElementById('now-big'), ns = document.getElementById('now-sub');
+    if (nowM < 0) {
+      var be = Math.ceil(costNow / -nowM);
+      nb.textContent = ro(c.name) + ' 바꾸면 매달 ' + won(nowM) + ' 덜 내요';
+      ns.textContent = (state.method === 'transfer' ? '승계 비용 ' : '위약금 ') + eun(man(costNow)) + ' ' + be + '개월이면 회수해요' + (be > TERM - NOW_T ? '. 남은 계약 기간보다 길어서 지금은 기다리는 게 나아요.' : '.');
+    } else {
+      nb.textContent = '지금 ' + eun(c.name) + ' 매달 ' + won(nowM) + ' 더 비싸요';
+      ns.textContent = '지금은 그대로 타는 게 나아요. 가격이 내려가면 알려드릴게요.';
+    }
+    var ab = document.getElementById('btn-alert');
+    ab.setAttribute('aria-pressed', alertOn ? 'true' : 'false');
+    ab.textContent = alertOn ? c.name + ' 가격 알림을 켰어요' : '내 월 부담보다 싸지면 알려주기';
+
+    // 표
+    var rowsT = '<tr><th>달</th><th>월납금</th><th>월 부담</th><th>나와 차이</th></tr>';
+    for (var i = 0; i <= NOW_T; i++) {
+      var b2 = burden(c, i), df = b2 - mineBurden();
+      rowsT += '<tr><td>' + (i === NOW_T ? '지금' : ymShort(i)) + '</td><td>' + rent(c, i).toLocaleString('ko-KR') + '</td><td>' + b2.toLocaleString('ko-KR') + '</td><td>' + (df <= 0 ? '−' : '+') + Math.abs(df).toLocaleString('ko-KR') + '</td></tr>';
+    }
+    document.getElementById('tbl').innerHTML = rowsT;
+  }
+
+  document.getElementById('when').addEventListener('input', function (e) { state.t = +e.target.value; render(); });
+  document.getElementById('method').addEventListener('click', function (e) { var b = e.target.closest('button'); if (b) { state.method = b.dataset.m; render(); } });
+  document.getElementById('fuel').addEventListener('click', function () { state.fuel = !state.fuel; render(); });
+  document.getElementById('btn-alert').addEventListener('click', function () {
+    alertOn = !alertOn;
+    try { localStorage.setItem('then.alert', alertOn ? '1' : '0'); } catch (e) {}
+    render();
+  });
+  document.getElementById('btn-quote').addEventListener('click', function (e) { e.target.textContent = '데모에서는 견적 화면으로 이어지지 않아요'; });
+  window.addEventListener('resize', function () { tip.hidden = true; });
+  render();
+})();
+</script>
+
+</body>
+</html>
