@@ -1,0 +1,684 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>이응 관리자</title>
+<link rel="icon" type="image/svg+xml" href="./eeung_symbol_blue.svg">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
+<style>
+:root{
+  --page:#F2F5FA; --card:#FFFFFF; --soft:#F4F6FB; --ink:#0A1021; --ink2:#2B3245; --muted:#667085; --faint:#A0A8BA; --line:#E7EBF3;
+  --primary:#2563FF; --primary-dark:#1B4FE0; --primary-deep:#1743C4; --primary-soft:#EAF0FF;
+  --cyan:#00C2FF; --cyan-deep:#0086B8; --cyan-soft:#E1F7FF; --purple:#7B61FF; --purple-soft:#EFECFF;
+  --orange:#F5821F; --orange-soft:#FFF1E2; --red:#EF4452; --red-soft:#FEECEE; --green:#12B76A; --green-soft:#E3F8EE;
+  --shadow:0 4px 14px rgba(27,43,85,.06); --shadow-lg:0 18px 48px rgba(27,43,85,.16);
+  --r-sm:12px; --r-md:16px; --r-lg:20px; --r-xl:28px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:"Pretendard Variable",Pretendard,-apple-system,BlinkMacSystemFont,system-ui,sans-serif;background:var(--page);color:var(--ink);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased;letter-spacing:-.01em}
+button,input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
+button{cursor:pointer;border:0;background:none}
+.ico{width:22px;height:22px;flex:none;display:inline-block;vertical-align:middle}
+.ico svg{width:100%;height:100%;display:block}
+
+/* 레이아웃 */
+.app{display:flex;min-height:100vh}
+.side{width:284px;flex:none;background:var(--card);border-right:1px solid var(--line);display:flex;flex-direction:column;position:sticky;top:0;height:100vh}
+.side .brand{display:flex;align-items:center;gap:12px;padding:28px 28px 22px}
+.side .brand img{height:30px}
+.side .brand span{font-size:13px;font-weight:600;color:var(--muted);padding:4px 10px;border-radius:999px;background:var(--soft)}
+.nav{flex:1;overflow:auto;padding:4px 16px 16px}
+.nav h6{font-size:12px;font-weight:600;color:var(--faint);padding:20px 14px 8px;letter-spacing:.02em}
+.nav button{width:100%;display:flex;align-items:center;gap:14px;padding:13px 14px;border-radius:var(--r-sm);font-size:16px;font-weight:500;color:var(--ink2);text-align:left}
+.nav button:hover{background:var(--soft)}
+.nav button.on{background:var(--primary-soft);color:var(--primary-deep);font-weight:700}
+.nav button .ico{color:var(--muted)}
+.nav button.on .ico{color:var(--primary)}
+.nav button .cnt{margin-left:auto;font-size:12px;font-weight:700;color:#fff;background:var(--red);border-radius:999px;padding:1px 8px}
+.rolebox{margin:12px 16px 20px;padding:18px;border-radius:var(--r-md);background:var(--soft)}
+.rolebox .lbl{font-size:12px;font-weight:600;color:var(--muted);margin-bottom:10px;display:flex;justify-content:space-between}
+.seg{display:flex;background:#fff;border-radius:12px;padding:4px;gap:4px;border:1px solid var(--line)}
+.seg button{flex:1;padding:9px 0;border-radius:9px;font-size:14px;font-weight:600;color:var(--muted)}
+.seg button.on{background:var(--primary);color:#fff}
+.me{display:flex;align-items:center;gap:12px;margin-top:14px}
+.avatar{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:15px;flex:none}
+.me b{display:block;font-size:15px}
+.me small{font-size:13px;color:var(--muted)}
+
+.main{flex:1;min-width:0;display:flex;flex-direction:column}
+.top{display:flex;align-items:center;gap:16px;padding:26px 40px 0}
+.top h1{font-size:28px;font-weight:800;letter-spacing:-.02em}
+.top .sub{font-size:15px;color:var(--muted);margin-top:2px}
+.top .grow{flex:1}
+.pill{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;padding:6px 12px;border-radius:999px;white-space:nowrap}
+.p-blue{background:var(--primary-soft);color:var(--primary-deep)} .p-cyan{background:var(--cyan-soft);color:var(--cyan-deep)}
+.p-purple{background:var(--purple-soft);color:var(--purple)} .p-orange{background:var(--orange-soft);color:#C4620E}
+.p-red{background:var(--red-soft);color:#C5303D} .p-gray{background:var(--soft);color:var(--muted)} .p-green{background:var(--green-soft);color:#0B8A50}
+.iconbtn{width:46px;height:46px;border-radius:14px;background:#fff;border:1px solid var(--line);display:grid;place-items:center;color:var(--ink2);position:relative}
+.iconbtn .dot{position:absolute;top:10px;right:11px;width:8px;height:8px;border-radius:50%;background:var(--red);border:2px solid #fff}
+.content{padding:28px 40px 60px;display:flex;flex-direction:column;gap:24px}
+
+/* 공통 */
+.card{background:var(--card);border-radius:var(--r-lg);box-shadow:var(--shadow);padding:28px}
+.card h3{font-size:19px;font-weight:700;display:flex;align-items:center;gap:10px}
+.card .hd{display:flex;align-items:center;gap:12px;margin-bottom:20px}
+.card .hd .grow{flex:1}
+.muted{color:var(--muted)} .faint{color:var(--faint)}
+.grid{display:grid;gap:24px}
+.g4{grid-template-columns:repeat(4,1fr)} .g5{grid-template-columns:repeat(5,1fr)} .g3{grid-template-columns:repeat(3,1fr)} .g2{grid-template-columns:1fr 1fr}
+.g21{grid-template-columns:2fr 1fr}
+.kpi{padding:24px 26px}
+.kpi .k{display:flex;align-items:center;gap:10px;font-size:15px;color:var(--muted);font-weight:500}
+.kpi .k .badge{width:40px;height:40px;border-radius:12px;display:grid;place-items:center}
+.kpi .v{font-size:32px;font-weight:800;margin-top:16px;letter-spacing:-.02em}
+.kpi .v small{font-size:16px;font-weight:600;color:var(--muted);margin-left:2px}
+.kpi .d{font-size:14px;margin-top:4px;font-weight:600}
+.up{color:#0B8A50} .down{color:#C5303D}
+.btn{height:48px;padding:0 20px;border-radius:14px;font-size:15px;font-weight:700;display:inline-flex;align-items:center;gap:8px;white-space:nowrap}
+.btn-primary{background:var(--primary);color:#fff;box-shadow:0 8px 18px rgba(37,99,255,.24)}
+.btn-primary:hover{background:var(--primary-dark)}
+.btn-ghost{background:#fff;border:1px solid var(--line);color:var(--ink2)}
+.btn-soft{background:var(--primary-soft);color:var(--primary-deep)}
+.btn-sm{height:38px;padding:0 14px;border-radius:11px;font-size:14px}
+.btn[disabled]{opacity:.45;cursor:not-allowed;box-shadow:none}
+.tabs{display:flex;gap:6px;background:var(--soft);padding:5px;border-radius:14px;width:max-content}
+.tabs button{padding:10px 18px;border-radius:10px;font-size:15px;font-weight:600;color:var(--muted)}
+.tabs button.on{background:#fff;color:var(--ink);box-shadow:var(--shadow)}
+.notice{display:flex;gap:12px;align-items:flex-start;padding:16px 20px;border-radius:var(--r-md);background:var(--primary-soft);color:var(--primary-deep);font-size:15px;font-weight:500}
+.notice.gray{background:var(--soft);color:var(--ink2)}
+.notice.orange{background:var(--orange-soft);color:#A4500B}
+.search{display:flex;align-items:center;gap:10px;height:48px;padding:0 16px;border-radius:14px;background:var(--soft);min-width:280px;color:var(--muted)}
+.search input{border:0;background:none;outline:none;flex:1;font-size:15px;color:var(--ink)}
+select.sel{height:48px;border-radius:14px;border:1px solid var(--line);background:#fff;padding:0 14px;font-size:15px;outline:none}
+select.sel-sm{height:38px;border-radius:11px;font-size:14px;padding:0 10px}
+
+/* 표 */
+table.tbl{width:100%;border-collapse:collapse}
+.tbl th{font-size:13px;font-weight:600;color:var(--muted);text-align:left;padding:0 16px 14px;border-bottom:1px solid var(--line);white-space:nowrap}
+.tbl td{padding:18px 16px;border-bottom:1px solid var(--line);font-size:15px;vertical-align:middle}
+.tbl tr:last-child td{border-bottom:0}
+.tbl tbody tr{cursor:default}
+.tbl tbody tr.click{cursor:pointer}
+.tbl tbody tr.click:hover td{background:#FAFBFE}
+.who{display:flex;align-items:center;gap:12px}
+.who b{display:block;font-weight:600}
+.who small{color:var(--muted);font-size:13px}
+.num{font-variant-numeric:tabular-nums}
+.masked{font-variant-numeric:tabular-nums;color:var(--ink2)}
+.link{color:var(--primary-dark);font-weight:600;font-size:14px}
+.toggle{width:46px;height:28px;border-radius:999px;background:#D5DAE5;position:relative;transition:.15s}
+.toggle::after{content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.2);transition:.15s}
+.toggle.on{background:var(--primary)} .toggle.on::after{left:21px}
+.toggle[disabled]{opacity:.5;cursor:not-allowed}
+
+/* 칸반 */
+.board{display:flex;gap:18px;overflow-x:auto;padding-bottom:8px}
+.col{flex:0 0 272px;background:#E9EDF5;border-radius:var(--r-lg);padding:16px;display:flex;flex-direction:column;gap:12px;min-height:420px}
+.col .ch{display:flex;align-items:center;justify-content:space-between;padding:4px 6px 6px;font-weight:700;font-size:16px}
+.col .ch span{font-size:13px;color:var(--muted);background:#fff;border-radius:999px;padding:2px 10px}
+.lead{background:#fff;border-radius:var(--r-md);padding:18px;box-shadow:var(--shadow);cursor:pointer;display:flex;flex-direction:column;gap:10px;border:1px solid transparent}
+.lead:hover{border-color:var(--primary)}
+.lead .t{display:flex;justify-content:space-between;align-items:center}
+.lead .t b{font-size:16px}
+.lead .car{font-size:14px;color:var(--ink2)}
+.lead .m{font-size:20px;font-weight:800;letter-spacing:-.02em}
+.lead .m small{font-size:13px;font-weight:600;color:var(--muted)}
+.lead .f{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--muted)}
+
+/* 상담 */
+.consult{display:grid;grid-template-columns:280px 1fr 300px;gap:0;background:#fff;border-radius:var(--r-lg);box-shadow:var(--shadow);overflow:hidden;height:calc(100vh - 170px);min-height:640px}
+.clist{border-right:1px solid var(--line);display:flex;flex-direction:column;min-height:0}
+.clist .hd{padding:22px 22px 14px}
+.clist .items{overflow:auto;flex:1}
+.citem{display:flex;gap:12px;padding:16px 18px;cursor:pointer;border-left:3px solid transparent}
+.citem:hover{background:#FAFBFE}
+.citem.on{background:var(--primary-soft);border-left-color:var(--primary)}
+.citem .body{flex:1;min-width:0}
+.citem .r1{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.citem .r1 b{font-size:15px}
+.citem .r1 small{font-size:12px;color:var(--faint)}
+.citem p{font-size:14px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}
+.citem .tags{display:flex;gap:6px;margin-top:8px}
+.citem .tags .pill{font-size:12px;padding:3px 9px}
+.thread{display:flex;flex-direction:column;min-height:0;background:#FAFBFD}
+.thread .th{display:flex;align-items:center;gap:12px;padding:18px 26px;background:#fff;border-bottom:1px solid var(--line)}
+.thread .th b{font-size:17px}
+.msgs{flex:1;overflow:auto;padding:24px 26px;display:flex;flex-direction:column;gap:14px}
+.summary{background:#fff;border:1px solid #D6E2FF;border-radius:var(--r-md);padding:18px 20px}
+.summary .st{display:flex;align-items:center;gap:8px;font-weight:700;color:var(--primary-deep);font-size:15px;margin-bottom:12px}
+.summary dl{display:grid;grid-template-columns:repeat(2,1fr);gap:12px 18px}
+.summary dt{font-size:12px;color:var(--muted)}
+.summary dd{font-size:15px;font-weight:600}
+.sys{align-self:center;font-size:13px;color:var(--muted);background:#EEF1F7;border-radius:999px;padding:6px 14px}
+.msg{max-width:80%;display:flex;gap:10px;align-items:flex-end}
+.msg>div{min-width:0}
+.msg .bub{padding:12px 16px;border-radius:18px;font-size:15px;line-height:1.55;white-space:pre-wrap}
+.msg small{font-size:11px;color:var(--faint);white-space:nowrap}
+.msg.cust .bub{background:#fff;border:1px solid var(--line);border-bottom-left-radius:6px}
+.msg.ai .bub{background:var(--soft);border-bottom-left-radius:6px}
+.msg.me{align-self:flex-end;flex-direction:row-reverse}
+.msg.me .bub{background:var(--primary);color:#fff;border-bottom-right-radius:6px}
+.msg .who-l{font-size:12px;color:var(--muted);margin-bottom:4px;font-weight:600}
+.compose{padding:16px 22px 20px;background:#fff;border-top:1px solid var(--line)}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.chip{font-size:13px;font-weight:600;padding:7px 12px;border-radius:999px;background:var(--soft);color:var(--ink2)}
+.chip:hover{background:var(--primary-soft);color:var(--primary-deep)}
+.cbox{display:flex;gap:10px;align-items:flex-end}
+.cbox textarea{flex:1;resize:none;border:1px solid var(--line);border-radius:14px;padding:13px 16px;font-size:15px;outline:none;height:52px;line-height:1.5}
+.cbox textarea:focus{border-color:var(--primary)}
+.cside{border-left:1px solid var(--line);overflow:auto;padding:22px}
+.cside h4{font-size:15px;font-weight:700;margin:22px 0 12px}
+.cside h4:first-child{margin-top:0}
+.kv{display:grid;grid-template-columns:96px 1fr;gap:10px 8px;font-size:14px}
+.kv dt{color:var(--muted)} .kv dd{font-weight:600}
+.quote{border:1px solid var(--line);border-radius:var(--r-md);padding:16px;margin-bottom:10px;display:flex;flex-direction:column;gap:6px}
+.quote.best{border-color:var(--primary);background:#F8FAFF}
+.quote .q1{display:flex;justify-content:space-between;align-items:center;font-size:14px;font-weight:600}
+.quote .q2{font-size:22px;font-weight:800;letter-spacing:-.02em}
+.quote .q2 small{font-size:13px;color:var(--muted);font-weight:600}
+.quote .q3{font-size:13px;color:var(--muted)}
+
+/* 차트 */
+.bars{display:flex;align-items:flex-end;gap:10px;height:200px;padding-top:8px}
+.bars .b{flex:1;display:flex;flex-direction:column;align-items:center;gap:8px;height:100%;justify-content:flex-end}
+.bars .b i{display:block;width:100%;max-width:30px;border-radius:8px 8px 4px 4px;background:var(--primary-soft)}
+.bars .b.hi i{background:var(--primary)}
+.bars .b span{font-size:12px;color:var(--faint)}
+.funnel{display:flex;flex-direction:column;gap:14px}
+.funnel .row{display:grid;grid-template-columns:86px 1fr 70px;align-items:center;gap:14px;font-size:15px}
+.funnel .track{height:14px;border-radius:999px;background:var(--soft);overflow:hidden}
+.funnel .track i{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,var(--primary),var(--cyan))}
+.funnel .row b{text-align:right;font-variant-numeric:tabular-nums}
+
+/* 드로어·모달·토스트 */
+.scrim{position:fixed;inset:0;background:rgba(10,16,33,.32);z-index:40;display:none}
+.scrim.on{display:block}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:520px;max-width:100%;background:#fff;z-index:41;box-shadow:var(--shadow-lg);transform:translateX(100%);transition:transform .2s;display:flex;flex-direction:column}
+.drawer.on{transform:none}
+.drawer .dh{display:flex;align-items:center;gap:12px;padding:26px 28px;border-bottom:1px solid var(--line)}
+.drawer .dh h2{font-size:21px;font-weight:800;flex:1}
+.drawer .db{flex:1;overflow:auto;padding:26px 28px;display:flex;flex-direction:column;gap:24px}
+.drawer .df{padding:18px 28px;border-top:1px solid var(--line);display:flex;gap:10px;justify-content:flex-end}
+.steps{display:flex;flex-direction:column;gap:0}
+.step{display:grid;grid-template-columns:28px 1fr;gap:14px;position:relative;padding-bottom:18px}
+.step::before{content:"";position:absolute;left:13px;top:28px;bottom:0;width:2px;background:var(--line)}
+.step:last-child::before{display:none}
+.step .dot{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:var(--soft);color:var(--faint);font-size:12px;font-weight:700}
+.step.done .dot{background:var(--primary);color:#fff}
+.step.cur .dot{background:#fff;border:2px solid var(--primary);color:var(--primary)}
+.step b{font-size:15px;display:block;margin-top:3px}
+.step small{color:var(--muted);font-size:13px}
+.modal{position:fixed;left:50%;top:50%;transform:translate(-50%,-48%);opacity:0;pointer-events:none;width:480px;max-width:calc(100% - 32px);background:#fff;border-radius:var(--r-xl);z-index:41;padding:30px;box-shadow:var(--shadow-lg);transition:.15s}
+.modal.on{opacity:1;pointer-events:auto;transform:translate(-50%,-50%)}
+.modal h2{font-size:21px;font-weight:800;margin-bottom:20px}
+.field{display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
+.field label{font-size:14px;font-weight:600;color:var(--ink2)}
+.field input,.field textarea,.field select{height:50px;border:1px solid var(--line);border-radius:14px;padding:0 16px;font-size:15px;outline:none;background:#fff}
+.field textarea{height:120px;padding:14px 16px;resize:vertical;line-height:1.55}
+.field input:focus,.field textarea:focus,.field select:focus{border-color:var(--primary)}
+.toast{position:fixed;left:50%;bottom:32px;transform:translate(-50%,20px);opacity:0;background:var(--ink);color:#fff;padding:14px 22px;border-radius:14px;font-size:15px;font-weight:600;z-index:60;transition:.2s;display:flex;align-items:center;gap:10px;pointer-events:none}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+.drop{border:2px dashed #C9D5F2;border-radius:var(--r-lg);padding:30px;text-align:center;background:#F8FAFF;color:var(--muted);font-size:15px}
+.drop b{color:var(--primary-deep)}
+.phone{width:300px;margin:0 auto;border-radius:36px;background:#0A1021;padding:12px;box-shadow:var(--shadow-lg)}
+.phone .scr{background:#B9C9DD;border-radius:26px;height:520px;padding:18px 14px;display:flex;flex-direction:column;gap:12px;overflow:hidden}
+.phone .scr.push{background:linear-gradient(160deg,#1B2B55,#2563FF)}
+.kakao{background:#fff;border-radius:14px;overflow:hidden;font-size:13px}
+.kakao .kh{background:#FEE500;padding:10px 14px;font-weight:700;font-size:13px}
+.kakao .kb{padding:14px;white-space:pre-wrap;line-height:1.55;color:#191919}
+.kakao .kbtn{margin:0 14px 14px;border:1px solid #E1E1E1;border-radius:8px;text-align:center;padding:9px;font-weight:600}
+.pushcard{background:rgba(255,255,255,.92);border-radius:16px;padding:12px 14px;display:flex;gap:10px;font-size:13px}
+.pushcard img{width:34px;height:34px;border-radius:9px}
+.pushcard b{display:block;font-size:13px}
+.matrix td,.matrix th{text-align:center}
+.matrix td:first-child,.matrix th:first-child{text-align:left}
+.lv{display:inline-block;font-size:13px;font-weight:600;padding:5px 11px;border-radius:999px}
+.lv.full{background:var(--primary-soft);color:var(--primary-deep)}
+.lv.part{background:var(--cyan-soft);color:var(--cyan-deep)}
+.lv.self{background:var(--purple-soft);color:var(--purple)}
+.lv.none{background:var(--soft);color:var(--faint)}
+.review{display:inline-flex;margin-left:6px;font-size:11px;font-weight:700;color:#C4620E;background:var(--orange-soft);padding:2px 7px;border-radius:999px;vertical-align:middle}
+.banners{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.bnr{border-radius:var(--r-lg);padding:22px;color:#fff;min-height:150px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden}
+.bnr::after{content:"";position:absolute;right:-30px;top:-30px;width:130px;height:130px;border-radius:50%;border:22px solid rgba(255,255,255,.12)}
+.bnr b{font-size:18px;line-height:1.35}
+.bnr small{opacity:.85;font-size:13px}
+.bnr .bf{display:flex;justify-content:space-between;align-items:center;position:relative;z-index:1}
+.empty{padding:40px;text-align:center;color:var(--muted)}
+.mob-head{display:none}
+@media (max-width:1360px){.g5{grid-template-columns:repeat(3,1fr)}}
+@media (max-width:1240px){.consult{grid-template-columns:280px 1fr}.cside{display:none}}
+@media (max-width:1024px){
+  .side{position:fixed;left:0;top:0;z-index:50;transform:translateX(-100%);transition:.2s;box-shadow:var(--shadow-lg)}
+  .side.open{transform:none}
+  .mob-head{display:flex}
+  .top{padding:20px 16px 0;flex-wrap:wrap}
+  .content{padding:20px 16px 48px}
+  .g4,.g5,.g3,.g2,.g21{grid-template-columns:1fr 1fr}
+  .consult{grid-template-columns:1fr;height:auto}
+  .clist{max-height:300px}
+  .banners{grid-template-columns:1fr}
+  .tbl-wrap{overflow-x:auto}
+  .search{min-width:0;flex:1}
+}
+@media (max-width:640px){.g4,.g5,.g3,.g2,.g21{grid-template-columns:1fr}.top h1{font-size:24px}}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="side" id="side">
+    <div class="brand"><img src="./eeung_logo_horizontal.svg" alt="이응"><span>관리자</span></div>
+    <nav class="nav" id="nav"></nav>
+    <div class="rolebox">
+      <div class="lbl"><span>데모 권한 전환</span><span class="faint">예시 데이터</span></div>
+      <div class="seg" id="seg"></div>
+      <div class="me" id="me"></div>
+    </div>
+  </aside>
+  <main class="main">
+    <header class="top">
+      <button class="iconbtn mob-head" onclick="document.getElementById('side').classList.toggle('open')" aria-label="메뉴"><span class="ico" data-i="more"></span></button>
+      <div><h1 id="title"></h1><div class="sub" id="subtitle"></div></div>
+      <div class="grow"></div>
+      <div id="topRight" style="display:flex;gap:12px;align-items:center"></div>
+      <button class="iconbtn" aria-label="알림" onclick="toast('새 알림 3건 · 메이트 이관 2건, 견적 만료 임박 1건')"><span class="ico" data-i="bell"></span><span class="dot"></span></button>
+    </header>
+    <section class="content" id="content"></section>
+  </main>
+</div>
+<div class="scrim" id="scrim" onclick="closeAll()"></div>
+<aside class="drawer" id="drawer"></aside>
+<div class="modal" id="modal"></div>
+<div class="toast" id="toast"></div>
+
+<script>
+const ICONS = {"home": "<path d=\"M4 10.6 12 4l8 6.6V19a1.5 1.5 0 0 1-1.5 1.5H15V15a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v5.5H5.5A1.5 1.5 0 0 1 4 19z\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>", "car": "<path d=\"M5 11l1.4-4.2a2 2 0 0 1 1.9-1.4h7.4a2 2 0 0 1 1.9 1.4L19 11\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><rect x=\"3.5\" y=\"11\" width=\"17\" height=\"6.5\" rx=\"2\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M6.2 17.5v1.7M17.8 17.5v1.7\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><circle cx=\"7.4\" cy=\"14.2\" r=\"1\" fill=\"currentColor\" stroke=\"none\"/><circle cx=\"16.6\" cy=\"14.2\" r=\"1\" fill=\"currentColor\" stroke=\"none\"/>", "chat": "<path d=\"M20 11.4c0 3.8-3.6 6.9-8 6.9-1 0-2-.2-2.9-.5L5 19.6l1-3.4a6.4 6.4 0 0 1-2-4.8c0-3.8 3.6-6.9 8-6.9s8 3.100 8 6.900z\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><circle cx=\"8.6\" cy=\"11.5\" r=\"1\" fill=\"currentColor\" stroke=\"none\"/><circle cx=\"12\" cy=\"11.5\" r=\"1\" fill=\"currentColor\" stroke=\"none\"/><circle cx=\"15.4\" cy=\"11.5\" r=\"1\" fill=\"currentColor\" stroke=\"none\"/>", "chat-fill": "<path d=\"M20.5 11.3c0 3.900-3.8 7.100-8.500 7.100-1 0-1.900-.1-2.800-.4L4.600 20l1.200-3.700a6.500 6.500 0 0 1-2.300-5c0-3.900 3.800-7.100 8.500-7.100s8.500 3.200 8.500 7.100z\" fill=\"currentColor\" stroke=\"none\"/>", "gauge": "<path d=\"M4.7 17.2a8 8 0 1 1 14.6 0\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M12 13.6l3.6-4.4\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><circle cx=\"12\" cy=\"13.8\" r=\"1.5\" fill=\"currentColor\" stroke=\"none\"/><path d=\"M7.2 17.2h9.600\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>", "user": "<circle cx=\"12\" cy=\"8.4\" r=\"3.6\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M5 19.8c.8-3.300 3.600-5.200 7-5.200s6.200 1.900 7 5.200\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>", "search": "<circle cx=\"10.8\" cy=\"10.8\" r=\"6.2\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M15.4 15.4 20 20\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>", "bell": "<path d=\"M6 16.500V11a6 6 0 1 1 12 0v5.500l1.500 2h-15z\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M10 20.600a2.100 2.100 0 0 0 4 0\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>", "megaphone": "<path d=\"M4 10v4a1 1 0 0 0 1 1h2.500l7 4V5l-7 4H5a1 1 0 0 0-1 1z\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M17.600 9.400a3.700 3.700 0 0 1 0 5.200\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M8 15v3.500a1 1 0 0 0 1 1h1.200\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>", "close": "<path d=\"M6 6l12 12M18 6 6 18\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>", "back": "<path d=\"M14.800 5.200 8 12l6.800 6.800\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>", "chevron-right": "<path d=\"M9.500 5.500 16 12l-6.500 6.500\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>", "chevron-down": "<path d=\"M5.500 9.200 12 15.700l6.500-6.500\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>", "chevron-up": "<path d=\"M5.500 14.800 12 8.300l6.500 6.500\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>", "check": "<path d=\"M5 12.600l4.500 4.500L19 7.400\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>", "arrow-up": "<path d=\"M12 19.200V5.500M6 11.200l6-6 6 6\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>", "plus": "<path d=\"M12 5v14M5 12h14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>", "calendar": "<rect x=\"4\" y=\"5.5\" width=\"16\" height=\"14.5\" rx=\"2.6\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M4 10.200h16M8.500 3.500v4M15.500 3.500v4\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><circle cx=\"8.6\" cy=\"14.4\" r=\"1.1\" fill=\"currentColor\" stroke=\"none\"/><circle cx=\"12\" cy=\"14.4\" r=\"1.1\" fill=\"currentColor\" stroke=\"none\"/>", "road": "<path d=\"M8.200 4 5 20M15.800 4 19 20M12 5v2.400M12 10.700v2.700M12 16.700V19\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>", "shield": "<path d=\"M12 3.5l7 2.5v5.5c0 4.3-2.9 7.6-7 9-4.1-1.4-7-4.7-7-9V6z\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M9 11.900l2.200 2.200 3.900-4.100\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>", "shield-plus": "<path d=\"M12 3.5l7 2.5v5.5c0 4.3-2.9 7.6-7 9-4.1-1.4-7-4.7-7-9V6z\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M12 8.800v5.400M9.300 11.500h5.400\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>", "mail": "<rect x=\"3.5\" y=\"5.8\" width=\"17\" height=\"12.8\" rx=\"2.6\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M4.600 8l7.400 5.400L19.400 8\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>", "phone-off": "<path d=\"M6.500 4.500h2.600l1.400 3.600-1.800 1.400a10 10 0 0 0 5.800 5.800l1.400-1.800 3.600 1.400v2.600a1.500 1.500 0 0 1-1.600 1.500A14.500 14.500 0 0 1 5 6.100a1.500 1.500 0 0 1 1.500-1.600z\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M15 4.500l5 5M20 4.500l-5 5\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>", "scale": "<path d=\"M12 4.500v15M7.500 19.500h9M5.500 7.500h13\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M3 13.600l2.500-6.100 2.500 6.100a2.500 2.500 0 0 1-5 0z\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M16 13.600l2.500-6.100 2.500 6.100a2.500 2.500 0 0 1-5 0z\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>", "won": "<circle cx=\"12\" cy=\"12\" r=\"8.6\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M7.600 9.200l1.700 6.200L12 9.700l2.700 5.700 1.700-6.200M7 12h10\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>", "key": "<circle cx=\"8.4\" cy=\"15.6\" r=\"3.6\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M11 13 19.500 4.500M16.200 7.800l2.500 2.500M13.700 10.300l1.900 1.900\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>", "swap": "<path d=\"M5 9.200h13l-3.200-3.200M19 14.800H6l3.200 3.200\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>", "hourglass": "<path d=\"M7 4h10M7 20h10M8.200 4v3.300c0 1.800 3.800 3 3.800 4.700s-3.800 2.900-3.800 4.700V20M15.800 4v3.300c0 1.800-3.800 3-3.800 4.700s3.800 2.900 3.800 4.700V20\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>", "receipt": "<path d=\"M6 3.500h12v17l-2-1.400-2 1.400-2-1.400-2 1.400-2-1.400-2 1.400z\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M9 8.500h6M9 12h6M9 15.500h3.500\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>", "tag": "<path d=\"M3.500 12.200V5.500a2 2 0 0 1 2-2h6.700a2 2 0 0 1 1.400.600l6.800 6.800a2 2 0 0 1 0 2.800l-6.700 6.700a2 2 0 0 1-2.800 0l-6.800-6.800a2 2 0 0 1-.600-1.400z\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><circle cx=\"8\" cy=\"8\" r=\"1.4\" fill=\"currentColor\" stroke=\"none\"/>", "bulb": "<path d=\"M9.500 17.600h5M10.200 20.500h3.600M12 3.500a6 6 0 0 0-3.700 10.700c.800.600 1.200 1.400 1.200 2.300v1.100h5v-1.100c0-.900.400-1.700 1.200-2.300A6 6 0 0 0 12 3.500z\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>", "fuel": "<path d=\"M5 20V6a2 2 0 0 1 2-2h5a2 2 0 0 1 2 2v14M3.800 20h11.400\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><rect x=\"7.4\" y=\"7.4\" width=\"4.2\" height=\"3.6\" rx=\"0.8\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M14 11h1.300a1.600 1.600 0 0 1 1.600 1.600V16a1.550 1.550 0 0 0 3.100 0V9.200l-2.600-2.600\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>", "bolt": "<path d=\"M13 3.200 5.600 13.600H11l-1 7.200 7.900-10.900h-5.500z\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>", "parking": "<rect x=\"4\" y=\"4\" width=\"16\" height=\"16\" rx=\"4.2\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M9.600 17V7.600h3.100a2.900 2.900 0 0 1 0 5.800H9.600\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>", "wrench": "<path d=\"M14.600 6.300a4.100 4.100 0 0 0-5.400 5.100L4 16.600a1.650 1.650 0 0 0 0 2.300l1.100 1.100a1.650 1.650 0 0 0 2.300 0l5.200-5.200a4.100 4.100 0 0 0 5.100-5.400l-2.700 2.700-2.400-.600-.600-2.400z\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>", "more": "<circle cx=\"12\" cy=\"12\" r=\"8.6\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><circle cx=\"8.2\" cy=\"12\" r=\"1.1\" fill=\"currentColor\" stroke=\"none\"/><circle cx=\"12\" cy=\"12\" r=\"1.1\" fill=\"currentColor\" stroke=\"none\"/><circle cx=\"15.8\" cy=\"12\" r=\"1.1\" fill=\"currentColor\" stroke=\"none\"/>", "id-card": "<rect x=\"3\" y=\"5\" width=\"18\" height=\"14\" rx=\"2.6\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><circle cx=\"8.6\" cy=\"10.8\" r=\"2\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M5.800 16c.500-1.400 1.500-2.100 2.800-2.100s2.300.700 2.800 2.100M14.200 10h3.800M14.200 13.500h3.800\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>", "chart": "<path d=\"M4 20h16M7.200 20v-5.500M12 20V6.500M16.800 20v-9\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>", "doc": "<path d=\"M7 3.500h7l4.500 4.500V19a1.500 1.500 0 0 1-1.500 1.500H7A1.500 1.500 0 0 1 5.500 19V5A1.500 1.500 0 0 1 7 3.500z\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M14 3.500V8h4.500M8.800 12.500h6.400M8.800 16h4.400\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>", "bank": "<path d=\"M3.500 9.500 12 4l8.500 5.500z\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M5.800 9.500v7.300M9.900 9.500v7.300M14.100 9.500v7.300M18.200 9.500v7.300M3.500 20h17M4.800 16.800h14.400\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>", "gift": "<rect x=\"4.2\" y=\"10.4\" width=\"15.6\" height=\"9.8\" rx=\"1.8\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><rect x=\"3\" y=\"7\" width=\"18\" height=\"3.4\" rx=\"1.2\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M12 7v13.200\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M12 7c-1.600 0-4.200-.500-4.200-2.400C7.800 3.600 8.700 3 9.700 3 11.200 3 12 5 12 7z\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M12 7c1.600 0 4.200-.500 4.200-2.400 0-1-.900-1.600-1.900-1.600C12.800 3 12 5 12 7z\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>", "trend-down": "<path d=\"M3.500 7l6 6 3.500-3.500 7.500 7.500\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M20.500 12v5h-5\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>", "headset": "<path d=\"M4.500 14v-2a7.500 7.500 0 0 1 15 0v2\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M4.500 13.500h2a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H6A1.500 1.500 0 0 1 4.500 17z\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M19.500 13.500h-2a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h.500a1.500 1.500 0 0 0 1.500-1.500z\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M19.500 17.500v.400a3 3 0 0 1-3 3H13.200\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>", "sparkle": "<path d=\"M12 3.2Q12.9 11.1 20.8 12Q12.9 12.9 12 20.8Q11.1 12.9 3.2 12Q11.1 11.1 12 3.2z\" fill=\"currentColor\" stroke=\"none\"/><circle cx=\"5.2\" cy=\"5.4\" r=\"1.1\" fill=\"currentColor\" stroke=\"none\"/><circle cx=\"18.8\" cy=\"5.4\" r=\"1.1\" fill=\"currentColor\" stroke=\"none\"/><circle cx=\"5.2\" cy=\"18.6\" r=\"1.1\" fill=\"currentColor\" stroke=\"none\"/><circle cx=\"18.8\" cy=\"18.6\" r=\"1.1\" fill=\"currentColor\" stroke=\"none\"/>", "lock": "<rect x=\"5\" y=\"10.5\" width=\"14\" height=\"10\" rx=\"2.6\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M8 10.500V8a4 4 0 0 1 8 0v2.500\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><circle cx=\"12\" cy=\"15.4\" r=\"1.3\" fill=\"currentColor\" stroke=\"none\"/>", "clock": "<circle cx=\"12\" cy=\"12\" r=\"8.6\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M12 7.500V12l3 2\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>", "star": "<path d=\"M12 3.800l2.500 5.200 5.700.800-4.100 4 1 5.700L12 16.800l-5.100 2.700 1-5.700-4.100-4 5.700-.800z\" fill=\"currentColor\" stroke=\"none\"/>"};
+const ic = (n, s) => `<span class="ico" ${s ? `style="width:${s}px;height:${s}px"` : ''}><svg viewBox="0 0 24 24">${ICONS[n] || ''}</svg></span>`;
+const won = n => n.toLocaleString('ko-KR');
+const $ = id => document.getElementById(id);
+
+/* ── 권한 ───────────────────────────── */
+const ROLES = {
+  super: { label: '최고관리자', name: '노은철', tone: 'blue' },
+  ops: { label: '운영자', name: '정하늘', tone: 'cyan' },
+  mate: { label: '메이트', name: '이도윤', tone: 'purple' },
+};
+// 메뉴별 권한: full(전체) / part(일부) / self(본인·담당) / null(숨김)
+const MENU = [
+  { group: '운영' },
+  { id: 'dash', label: '대시보드', icon: 'chart', perm: { super: 'full', ops: 'part', mate: 'self' } },
+  { id: 'pipe', label: '상담·리드·계약', icon: 'receipt', perm: { super: 'full', ops: 'full', mate: 'self' } },
+  { id: 'consult', label: '메이트 상담', icon: 'headset', perm: { super: 'full', ops: 'full', mate: 'self' }, badge: true },
+  { id: 'members', label: '회원 관리', icon: 'user', perm: { super: 'full', ops: 'part', mate: 'self' } },
+  { id: 'mates', label: '메이트 계정·배정', icon: 'id-card', perm: { super: 'full', ops: 'part', mate: null } },
+  { group: '데이터·콘텐츠' },
+  { id: 'data', label: '요율표·차량 데이터', icon: 'bank', perm: { super: 'full', ops: 'full', mate: 'part' } },
+  { id: 'content', label: '콘텐츠 관리', icon: 'doc', perm: { super: 'full', ops: 'full', mate: null } },
+  { id: 'notify', label: '푸시·알림톡', icon: 'megaphone', perm: { super: 'full', ops: 'full', mate: 'self' } },
+  { group: '시스템' },
+  { id: 'audit', label: '권한·접속 로그', icon: 'lock', perm: { super: 'full', ops: null, mate: null } },
+];
+const S = { role: 'super', page: 'dash', tab: {}, chat: 'c1', stageFilter: 'all' };
+const can = (id, role = S.role) => (MENU.find(m => m.id === id) || {}).perm?.[role] || null;
+
+/* ── 예시 데이터 ─────────────────────── */
+const MATES = [
+  { id: 'm1', name: '이도윤', st: '상담 중', active: 7, month: 6, rate: 31, since: '2026.09', perm: '메이트' },
+  { id: 'm2', name: '김서연', st: '대기', active: 5, month: 8, rate: 36, since: '2026.09', perm: '메이트' },
+  { id: 'm3', name: '박지후', st: '상담 중', active: 9, month: 5, rate: 24, since: '2026.10', perm: '메이트' },
+  { id: 'm4', name: '최하린', st: '오프라인', active: 3, month: 4, rate: 29, since: '2026.10', perm: '메이트' },
+];
+const STAGES = ['신규 리드', 'AI 상담', '메이트 상담', '견적 발송', '심사·서류', '계약 완료', '출고'];
+const LEADS = [
+  { id: 'L101', name: '정민준', car: '기아 EV3 롱레인지 에어', m: 498000, term: 48, stage: 2, mate: 'm1', cap: '하나캐피탈', src: '카카오 가입', ago: '12분 전', type: '장기렌트' },
+  { id: 'L102', name: '한서아', car: '기아 셀토스 1.6 HEV 프레스티지', m: 412000, term: 48, stage: 3, mate: 'm1', cap: 'BNK캐피탈', src: '앱 견적', ago: '1시간 전', type: '장기렌트' },
+  { id: 'L103', name: '오지호', car: '현대 그랜저 2.5 익스클루시브', m: 689000, term: 60, stage: 4, mate: 'm2', cap: 'KB캐피탈', src: '앱 견적', ago: '3시간 전', type: '장기렌트' },
+  { id: 'L104', name: '윤채원', car: '기아 카니발 1.6T HEV 9인승', m: 742000, term: 48, stage: 1, mate: null, cap: '-', src: '카카오 가입', ago: '5분 전', type: '장기렌트' },
+  { id: 'L105', name: '임도현', car: '제네시스 GV70 2.5T AWD', m: 935000, term: 36, stage: 5, mate: 'm2', cap: '신한캐피탈', src: '내 차 등록', ago: '어제', type: '리스' },
+  { id: 'L106', name: '송유나', car: '기아 레이 시그니처', m: 289000, term: 60, stage: 0, mate: null, cap: '-', src: '앱 견적', ago: '방금', type: '장기렌트' },
+  { id: 'L107', name: '강태윤', car: '현대 아반떼 1.6 인스퍼레이션', m: 356000, term: 48, stage: 3, mate: 'm3', cap: '하나캐피탈', src: '앱 견적', ago: '2시간 전', type: '장기렌트' },
+  { id: 'L108', name: '배수아', car: '기아 쏘렌토 1.6T HEV 시그니처', m: 618000, term: 60, stage: 2, mate: 'm3', cap: 'KB캐피탈', src: '내 차 등록', ago: '40분 전', type: '장기렌트' },
+  { id: 'L109', name: '조은우', car: '기아 EV5 롱레인지', m: 571000, term: 48, stage: 6, mate: 'm1', cap: '롯데캐피탈', src: '카카오 가입', ago: '3일 전', type: '장기렌트' },
+  { id: 'L110', name: '서지안', car: '제네시스 G80 2.5T', m: 1012000, term: 48, stage: 4, mate: 'm4', cap: 'BNK캐피탈', src: '앱 견적', ago: '어제', type: '리스' },
+  { id: 'L111', name: '문하율', car: '현대 캐스퍼 일렉트릭', m: 318000, term: 60, stage: 1, mate: null, cap: '-', src: '앱 견적', ago: '20분 전', type: '장기렌트' },
+  { id: 'L112', name: '홍시우', car: '기아 셀토스 1.6T 시그니처', m: 438000, term: 48, stage: 5, mate: 'm1', cap: 'KB캐피탈', src: '앱 견적', ago: '2일 전', type: '장기렌트' },
+];
+const MEMBERS = [
+  { name: '정민준', ph: '010-4821-3392', join: '2026.10.08', via: '카카오', car: '셀토스 2022 (내 차 등록)', want: 'EV3', mate: 'm1', st: '정상' },
+  { name: '한서아', ph: '010-7710-2045', join: '2026.10.07', via: '카카오', car: '-', want: '셀토스 HEV', mate: 'm1', st: '정상' },
+  { name: '오지호', ph: '010-3392-8810', join: '2026.10.06', via: '카카오', car: '그랜저 2019', want: '그랜저', mate: 'm2', st: '정상' },
+  { name: '윤채원', ph: '010-5521-7703', join: '2026.10.08', via: '카카오', car: '-', want: '카니발 HEV', mate: null, st: '정상' },
+  { name: '임도현', ph: '010-9902-1187', join: '2026.10.02', via: '카카오', car: 'GV70 2021 (내 차 등록)', want: 'GV70', mate: 'm2', st: '정상' },
+  { name: '조은우', ph: '010-2283-4410', join: '2026.09.29', via: '카카오', car: '-', want: 'EV5', mate: 'm1', st: '정상' },
+  { name: '서지안', ph: '010-6624-9031', join: '2026.10.01', via: '카카오', car: 'G80 2020', want: 'G80', mate: 'm4', st: '휴면 예정' },
+  { name: '홍시우', ph: '010-8130-2276', join: '2026.10.03', via: '카카오', car: '-', want: '셀토스', mate: 'm1', st: '정상' },
+  { name: '권나은', ph: '010-4407-6612', join: '2026.09.26', via: '카카오', car: '-', want: '-', mate: null, st: '탈퇴 요청' },
+];
+const CHATS = [
+  { id: 'c1', lead: 'L101', name: '정민준', mate: 'm1', last: '월 50만원 안쪽이면 EV3로 하고 싶어요', time: '12분 전', handoff: '가격 상담 요청', unread: 2,
+    sum: { 예산: '월 50만원 이하', 차종: 'EV3 · 셀토스 HEV', 기간: '48개월', 선납: '없음', 주행: '연 2만km', 우선순위: '월 납입금' },
+    msgs: [
+      ['cust', 'EV3 장기렌트 견적 보고 왔어요. 지금 타는 셀토스는 어떻게 하죠?', '14:02'],
+      ['ai', '지금 셀토스 렌트가 22개월 남아 있어요. 승계하면 비용 33만원, 중도해지는 위약금이 약 380만원이라 승계가 유리해요.', '14:02'],
+      ['cust', '월 50만원 안쪽이면 EV3로 하고 싶어요', '14:05'],
+      ['sys', 'AI 메이트가 이도윤 메이트에게 상담을 넘겼어요 · 사유: 가격 협의', '14:05'],
+    ],
+    quotes: [['하나캐피탈', 498000, '48개월 · 연 2만km · 무보증', true], ['BNK캐피탈', 506000, '48개월 · 연 2만km · 무보증'], ['KB캐피탈', 512000, '48개월 · 연 2만km · 무보증']] },
+  { id: 'c2', lead: 'L108', name: '배수아', mate: 'm3', last: '보증금 있으면 얼마나 내려가요?', time: '40분 전', handoff: '조건 변경', unread: 1,
+    sum: { 예산: '월 60만원 내외', 차종: '쏘렌토 HEV', 기간: '60개월', 선납: '검토 중', 주행: '연 2만km', 우선순위: '총비용' },
+    msgs: [['cust', '쏘렌토 하이브리드 60개월로 보고 있어요', '13:10'], ['ai', 'KB캐피탈 월 61.8만원이 가장 낮아요. 보증금 30%를 넣으면 다시 계산해 드릴게요.', '13:11'], ['cust', '보증금 있으면 얼마나 내려가요?', '13:30'], ['sys', 'AI 메이트가 박지후 메이트에게 상담을 넘겼어요 · 사유: 조건 변경', '13:30']],
+    quotes: [['KB캐피탈', 618000, '60개월 · 연 2만km · 무보증', true], ['하나캐피탈', 624000, '60개월 · 연 2만km · 무보증']] },
+  { id: 'c3', lead: 'L102', name: '한서아', mate: 'm1', last: '견적서 확인했어요, 심사는 어떻게 해요?', time: '1시간 전', handoff: '진행 문의', unread: 0,
+    sum: { 예산: '월 42만원 이하', 차종: '셀토스 HEV', 기간: '48개월', 선납: '없음', 주행: '연 1.5만km', 우선순위: '빠른 출고' },
+    msgs: [['ai', '셀토스 HEV는 BNK캐피탈 월 41.2만원이 가장 낮아요.', '11:20'], ['me', '견적서 보내드렸어요. 출고는 3주 정도 예상돼요.', '11:40'], ['cust', '견적서 확인했어요, 심사는 어떻게 해요?', '12:02']],
+    quotes: [['BNK캐피탈', 412000, '48개월 · 연 1.5만km · 무보증', true]] },
+  { id: 'c4', lead: 'L110', name: '서지안', mate: 'm4', last: '리스로 하면 비용처리 되나요?', time: '어제', handoff: '리스 상담', unread: 0,
+    sum: { 예산: '월 100만원 내외', 차종: 'G80 2.5T', 기간: '48개월', 선납: '30%', 주행: '연 3만km', 우선순위: '비용처리' },
+    msgs: [['cust', '리스로 하면 비용처리 되나요?', '어제']], quotes: [['BNK캐피탈', 1012000, '48개월 · 연 3만km · 선납 30%', true]] },
+];
+const RATES = [
+  { cap: 'KB캐피탈', prod: '장기렌트', period: '2026.10.01 ~ 10.31', up: '10.01 09:12', by: '정하늘', st: '적용 중' },
+  { cap: '하나캐피탈', prod: '장기렌트', period: '2026.10.01 ~ 10.31', up: '10.01 09:40', by: '정하늘', st: '적용 중' },
+  { cap: 'BNK캐피탈', prod: '장기렌트', period: '2026.10.01 ~ 10.31', up: '10.02 10:05', by: '노은철', st: '적용 중' },
+  { cap: '신한캐피탈', prod: '리스', period: '2026.10.01 ~ 10.31', up: '10.02 14:22', by: '정하늘', st: '적용 중' },
+  { cap: '롯데캐피탈', prod: '장기렌트', period: '2026.10.08 ~ 10.31', up: '10.08 08:55', by: '정하늘', st: '검수 대기' },
+];
+const CARS = [
+  ['기아 EV3', 4, '10.06', '국비 + 지자체', '완료'], ['기아 셀토스', 6, '10.06', '-', '완료'], ['기아 쏘렌토 HEV', 5, '10.05', '-', '완료'],
+  ['현대 그랜저', 5, '10.05', '-', '완료'], ['기아 카니발 HEV', 4, '10.04', '-', '이미지 1장 누락'], ['제네시스 GV70', 3, '10.04', '-', '완료'],
+  ['기아 EV5', 3, '10.06', '국비 + 지자체', '완료'], ['현대 캐스퍼 일렉트릭', 2, '10.06', '국비 + 지자체', '완료'],
+];
+const CRAWL = [['KB캐피탈', 18, 18], ['하나캐피탈', 18, 18], ['BNK캐피탈', 17, 18], ['신한캐피탈', 17, 18], ['롯데캐피탈', 17, 18], ['우리금융캐피탈', 6, 18], ['오릭스캐피탈', 0, 18], ['NH농협캐피탈', 0, 18], ['IM캐피탈', 0, 18], ['메리츠캐피탈', 0, 18]];
+const BEST = [
+  ['기아 EV3 롱레인지', '하나캐피탈', 498000, 8000], ['기아 셀토스 HEV', 'BNK캐피탈', 412000, 9000], ['현대 그랜저 2.5', 'KB캐피탈', 689000, 4000],
+  ['기아 쏘렌토 HEV', 'KB캐피탈', 618000, 6000], ['기아 카니발 HEV', '하나캐피탈', 742000, 11000], ['제네시스 GV70 2.5T', '신한캐피탈', 905000, 7000],
+];
+const CONTENT = {
+  banner: [
+    { t: '지금 바꾸면\n월 납입금이 내려가요', s: '갈아타기 진단', on: true, g: 'linear-gradient(135deg,#2563FF,#00C2FF)' },
+    { t: 'EV3 장기렌트\n월 49만원대부터', s: '전기차 특가', on: true, g: 'linear-gradient(135deg,#1743C4,#7B61FF)' },
+    { t: '내 차 등록하고\n시세 알림 받기', s: '내 차 대시보드', on: false, g: 'linear-gradient(135deg,#0A1021,#2563FF)' },
+  ],
+  guide: [['장기렌트와 리스, 뭐가 다를까요', '2026.10.02', true], ['승계와 중도해지 비용 비교하는 법', '2026.09.30', true], ['전기차 보조금, 렌트에도 적용될까', '2026.09.28', true]],
+  review: [['EV3로 갈아타고 월 8만원 줄었어요', '정*준', true], ['상담이 빨라서 좋았어요', '한*아', true], ['견적 비교가 한눈에 보여요', '오*호', false]],
+  faq: [['중도해지하면 위약금은 얼마인가요?', true], ['신용점수에 영향이 있나요?', true], ['보험은 누구 이름으로 들어가나요?', true]],
+  notice: [['[안내] 개인정보 처리방침 개정 (10/15 시행)', '2026.10.08', true], ['[점검] 10/12 02:00~04:00 서비스 점검', '2026.10.07', true]],
+};
+const SENT = [
+  ['10.08 10:00', '앱 푸시', '전체 회원', '전기차 특가 오픈', 2140, '정하늘'],
+  ['10.07 18:30', '알림톡', '견적 만료 D-3', '견적 유효기간 안내', 38, '자동'],
+  ['10.07 11:12', '알림톡', '개별 · 한서아', '견적서 발송 안내', 1, '이도윤'],
+  ['10.05 09:00', '앱 푸시', '내 차 등록 회원', '내 차 시세가 바뀌었어요', 612, '노은철'],
+];
+const LOGS = [
+  ['10.08 14:21', '노은철', '최고관리자', '회원 원문 조회', '정민준 연락처', '211.234.**.12'],
+  ['10.08 13:02', '정하늘', '운영자', '요율표 업로드', '롯데캐피탈 10월', '211.234.**.40'],
+  ['10.08 11:47', '이도윤', '메이트', '상담 열람', '한서아', '175.223.**.8'],
+  ['10.07 17:30', '정하늘', '운영자', '알림톡 발송', '견적 만료 D-3 (38명)', '211.234.**.40'],
+  ['10.07 09:15', '노은철', '최고관리자', '권한 변경', '최하린 → 메이트', '211.234.**.12'],
+];
+const mateName = id => (MATES.find(m => m.id === id) || {}).name || '미배정';
+const ME_MATE = 'm1';
+const mask = p => p.replace(/(\d{3})-(\d{4})-(\d{4})/, '$1-****-$3');
+const initial = n => n[0];
+const AV_TONES = [['#EAF0FF', '#1743C4'], ['#E1F7FF', '#0086B8'], ['#EFECFF', '#5A41DB'], ['#FFF1E2', '#C4620E'], ['#E3F8EE', '#0B8A50']];
+const av = (n, s = 40) => { const t = AV_TONES[n.charCodeAt(0) % AV_TONES.length]; return `<span class="avatar" style="width:${s}px;height:${s}px;background:${t[0]};color:${t[1]}">${initial(n)}</span>`; };
+const stagePill = i => `<span class="pill ${['p-gray', 'p-cyan', 'p-purple', 'p-blue', 'p-orange', 'p-green', 'p-green'][i]}">${STAGES[i]}</span>`;
+const scope = () => S.role === 'mate';
+const myLeads = () => scope() ? LEADS.filter(l => l.mate === ME_MATE) : LEADS;
+
+/* ── 공통 렌더 ───────────────────────── */
+const PAGES = {};
+function render() {
+  if (!can(S.page)) S.page = 'dash';
+  $('nav').innerHTML = MENU.map((m, i) => {
+    if (m.group) { const next = MENU.slice(i + 1); const end = next.findIndex(x => x.group); return (end < 0 ? next : next.slice(0, end)).some(x => can(x.id)) ? `<h6>${m.group}</h6>` : ''; }
+    if (!can(m.id)) return '';
+    const n = m.badge ? CHATS.filter(c => !scope() || c.mate === ME_MATE).reduce((a, c) => a + c.unread, 0) : 0;
+    return `<button class="${S.page === m.id ? 'on' : ''}" onclick="go('${m.id}')">${ic(m.icon)}<span>${m.label}</span>${n ? `<span class="cnt">${n}</span>` : ''}</button>`;
+  }).join('');
+  $('seg').innerHTML = Object.entries(ROLES).map(([k, r]) => `<button class="${S.role === k ? 'on' : ''}" onclick="setRole('${k}')">${r.label}</button>`).join('');
+  const r = ROLES[S.role];
+  $('me').innerHTML = `${av(r.name)}<div><b>${r.name}</b><small>${r.label}${S.role === 'mate' ? ' · 담당 고객만 표시' : ''}</small></div>`;
+  const p = PAGES[S.page]();
+  $('title').textContent = p.title;
+  $('subtitle').innerHTML = p.sub || '';
+  $('topRight').innerHTML = p.right || '';
+  $('content').innerHTML = p.html;
+  p.after && p.after();
+  hydrateIcons();
+}
+function hydrateIcons() { document.querySelectorAll('[data-i]').forEach(e => { e.innerHTML = `<svg viewBox="0 0 24 24">${ICONS[e.dataset.i]}</svg>`; e.removeAttribute('data-i'); }); }
+function go(id) { S.page = id; $('side').classList.remove('open'); render(); window.scrollTo(0, 0); }
+function setRole(k) { S.role = k; if (k === 'mate' && !CHATS.find(c => c.id === S.chat && c.mate === ME_MATE)) S.chat = 'c1'; render(); toast(`${ROLES[k].label} 화면으로 바꿨어요`); }
+function setTab(page, t) { S.tab[page] = t; render(); }
+function tabs(page, list) { const cur = S.tab[page] || list[0][0]; return `<div class="tabs">${list.map(([k, l]) => `<button class="${cur === k ? 'on' : ''}" onclick="setTab('${page}','${k}')">${l}</button>`).join('')}</div>`; }
+const curTab = (page, d) => S.tab[page] || d;
+let tt; function toast(t) { const e = $('toast'); e.innerHTML = ic('check', 18) + t; e.classList.add('on'); clearTimeout(tt); tt = setTimeout(() => e.classList.remove('on'), 2200); }
+function openDrawer(html) { $('drawer').innerHTML = html; $('drawer').classList.add('on'); $('scrim').classList.add('on'); hydrateIcons(); }
+function openModal(html) { $('modal').innerHTML = html; $('modal').classList.add('on'); $('scrim').classList.add('on'); hydrateIcons(); }
+function closeAll() { $('drawer').classList.remove('on'); $('modal').classList.remove('on'); $('scrim').classList.remove('on'); }
+const roleNote = t => `<div class="notice gray">${ic('lock', 20)}<span>${t}</span></div>`;
+const kpi = (label, v, unit, d, icon, tone) => `<div class="card kpi"><div class="k"><span class="badge" style="background:var(--${tone}-soft);color:var(--${tone === 'primary' ? 'primary' : tone})">${ic(icon, 22)}</span>${label}</div><div class="v num">${v}<small>${unit}</small></div>${d ? `<div class="d ${d[0] === '-' ? 'down' : 'up'}">${d}</div>` : ''}</div>`;
+
+/* ── 대시보드 ───────────────────────── */
+PAGES.dash = () => {
+  const days = [14, 18, 11, 22, 19, 25, 28, 21, 30, 26, 33, 29, 36, 41];
+  const max = Math.max(...days);
+  const bars = `<div class="bars">${days.map((d, i) => `<div class="b ${i === days.length - 1 ? 'hi' : ''}"><i style="height:${d / max * 100}%"></i><span>${i === days.length - 1 ? '오늘' : (9 + Math.floor((i + 25) / 30)) + '.' + String(((i + 24) % 30) + 1).padStart(2, '0')}</span></div>`).join('')}</div>`;
+  const fun = [['가입', 412, 100], ['상담 요청', 236, 57], ['견적 발송', 128, 31], ['심사 진입', 61, 15], ['계약 완료', 23, 5.6]];
+  const funnel = `<div class="funnel">${fun.map(f => `<div class="row"><span>${f[0]}</span><div class="track"><i style="width:${f[2]}%"></i></div><b>${won(f[1])}</b></div>`).join('')}</div>`;
+  if (S.role === 'mate') {
+    const mine = myLeads();
+    const todo = [['정민준', '가격 협의 · AI 이관', '12분 전', 'p-red', '응답 대기'], ['한서아', '심사 절차 문의', '1시간 전', 'p-orange', '응답 대기'], ['홍시우', '심사 서류 2종 미제출', '오늘 마감', 'p-blue', '서류 안내']];
+    return {
+      title: '내 대시보드', sub: '담당 고객 기준 · 이번 달',
+      html: `<div class="grid g4">${kpi('진행 중 상담', mine.filter(l => l.stage < 5).length, '건', '', 'headset', 'primary')}${kpi('응답 대기', 2, '건', '', 'clock', 'orange')}${kpi('이번 달 계약', 6, '건', '+2 지난달 대비', 'check', 'cyan')}${kpi('내 전환율', 31, '%', '+4%p 팀 평균 대비', 'trend-down', 'purple')}</div>
+      <div class="grid g21"><div class="card"><div class="hd"><h3>지금 할 일</h3></div><table class="tbl"><tbody>${todo.map(t => `<tr class="click" onclick="go('consult')"><td><div class="who">${av(t[0])}<div><b>${t[0]}</b><small>${t[1]}</small></div></div></td><td><span class="pill ${t[3]}">${t[4]}</span></td><td class="muted" style="text-align:right">${t[2]}</td></tr>`).join('')}</tbody></table></div>
+      <div class="card"><div class="hd"><h3>내 단계별 현황</h3></div><div class="funnel">${STAGES.slice(1, 6).map((s, i) => { const n = mine.filter(l => l.stage === i + 1).length; return `<div class="row"><span>${s}</span><div class="track"><i style="width:${n / 3 * 100}%"></i></div><b>${n}</b></div>`; }).join('')}</div></div></div>
+      ${roleNote('메이트는 본인 실적과 담당 고객만 볼 수 있어요. 매출·수수료와 다른 메이트 실적은 보이지 않아요.')}`,
+    };
+  }
+  const isSuper = S.role === 'super';
+  return {
+    title: '대시보드', sub: '2026년 10월 · 오늘 14:30 기준',
+    right: `<select class="sel"><option>이번 달</option><option>지난 7일</option><option>지난달</option></select>`,
+    html: `<div class="grid ${isSuper ? 'g5' : 'g4'}">${kpi('신규 가입', 412, '명', '+18% 지난달 대비', 'user', 'primary')}${kpi('상담 요청', 236, '건', '+11%', 'headset', 'cyan')}${kpi('견적 발송', 128, '건', '+7%', 'doc', 'purple')}${kpi('계약 완료', 23, '건', '+5건', 'check', 'primary')}${isSuper ? kpi('중개 수수료', '1,840', '만원', '+12%', 'won', 'orange') : ''}</div>
+    <div class="grid g21"><div class="card"><div class="hd"><h3>일별 상담 요청</h3><div class="grow"></div><span class="pill p-blue">최근 14일</span></div>${bars}</div>
+    <div class="card"><div class="hd"><h3>전환 단계</h3></div>${funnel}</div></div>
+    <div class="grid g2"><div class="card"><div class="hd"><h3>메이트별 실적</h3><div class="grow"></div><button class="link" onclick="go('mates')">메이트 관리</button></div>
+      <table class="tbl"><thead><tr><th>메이트</th><th>진행 중</th><th>이번 달 계약</th><th>전환율</th></tr></thead><tbody>${MATES.map(m => `<tr><td><div class="who">${av(m.name, 36)}<b>${m.name}</b></div></td><td class="num">${m.active}건</td><td class="num">${m.month}건</td><td class="num">${m.rate}%</td></tr>`).join('')}</tbody></table></div>
+    <div class="card"><div class="hd"><h3>캐피탈사별 계약</h3></div><table class="tbl"><thead><tr><th>캐피탈사</th><th>계약</th><th>평균 월 납입금</th>${isSuper ? '<th>수수료</th>' : ''}</tr></thead><tbody>${[['KB캐피탈', 7, 612000, 560], ['하나캐피탈', 6, 488000, 470], ['BNK캐피탈', 5, 455000, 380], ['신한캐피탈', 3, 901000, 290], ['롯데캐피탈', 2, 571000, 140]].map(c => `<tr><td><b>${c[0]}</b></td><td class="num">${c[1]}건</td><td class="num">${won(c[2])}원</td>${isSuper ? `<td class="num">${c[3]}만원</td>` : ''}</tr>`).join('')}</tbody></table></div></div>
+    ${isSuper ? '' : roleNote('운영자는 운영 지표만 볼 수 있어요. 수수료·매출은 최고관리자에게만 보여요.')}`,
+  };
+};
+
+/* ── 상담·리드·계약 ─────────────────── */
+PAGES.pipe = () => {
+  const list = myLeads();
+  const view = curTab('pipe', 'board');
+  const cols = STAGES.map((s, i) => {
+    const ls = list.filter(l => l.stage === i);
+    return `<div class="col"><div class="ch">${s}<span>${ls.length}</span></div>${ls.map(l => `<div class="lead" onclick="leadDetail('${l.id}')"><div class="t"><b>${l.name}</b><span class="pill ${l.type === '리스' ? 'p-purple' : 'p-gray'}" style="font-size:12px;padding:3px 9px">${l.type}</span></div><div class="car">${l.car}</div><div class="m num">${won(l.m)}<small>원/월 · ${l.term}개월</small></div><div class="f"><span>${l.mate ? '담당 ' + mateName(l.mate) : '<b style="color:var(--red)">미배정</b>'}</span><span>${l.ago}</span></div></div>`).join('') || '<div class="empty" style="padding:20px;font-size:14px">없음</div>'}</div>`;
+  }).join('');
+  const table = `<div class="card tbl-wrap"><table class="tbl"><thead><tr><th>고객</th><th>차량</th><th>월 납입금</th><th>캐피탈사</th><th>단계</th><th>담당</th><th>유입</th><th>최근 활동</th></tr></thead><tbody>${list.map(l => `<tr class="click" onclick="leadDetail('${l.id}')"><td><div class="who">${av(l.name, 36)}<b>${l.name}</b></div></td><td>${l.car}</td><td class="num">${won(l.m)}원</td><td>${l.cap}</td><td>${stagePill(l.stage)}</td><td>${l.mate ? mateName(l.mate) : '<span class="pill p-red">미배정</span>'}</td><td class="muted">${l.src}</td><td class="muted">${l.ago}</td></tr>`).join('')}</tbody></table></div>`;
+  return {
+    title: '상담·리드·계약', sub: scope() ? `내 담당 ${list.length}건` : `전체 ${list.length}건 · 미배정 ${list.filter(l => !l.mate).length}건`,
+    right: `<div class="search">${ic('search', 20)}<input placeholder="고객 이름, 차종 검색"></div>`,
+    html: `<div style="display:flex;align-items:center;gap:12px">${tabs('pipe', [['board', '단계 보드'], ['list', '목록']])}<div style="flex:1"></div></div>
+    <div class="notice">${ic('bulb', 20)}<span>전자계약은 금융사 시스템에서 진행돼요. 여기서는 진행 단계를 관리하고, 단계가 바뀌면 고객에게 알림이 나가요.</span></div>
+    ${view === 'board' ? `<div class="board">${cols}</div>` : table}
+    ${scope() ? roleNote('메이트는 본인에게 배정된 리드만 볼 수 있어요.') : ''}`,
+  };
+};
+function leadDetail(id) {
+  const l = LEADS.find(x => x.id === id);
+  const canAssign = S.role !== 'mate';
+  openDrawer(`<div class="dh">${av(l.name, 46)}<h2>${l.name}<div class="muted" style="font-size:14px;font-weight:500">${l.id} · ${l.src}</div></h2><button class="iconbtn" onclick="closeAll()">${ic('close')}</button></div>
+  <div class="db">
+    <div class="card" style="box-shadow:none;background:var(--soft);padding:22px"><div class="muted" style="font-size:14px">${l.type} · ${l.term}개월</div><div style="font-size:18px;font-weight:700;margin-top:4px">${l.car}</div><div style="font-size:30px;font-weight:800;margin-top:10px" class="num">${won(l.m)}<span style="font-size:15px;color:var(--muted);font-weight:600">원/월</span></div><div class="muted" style="font-size:14px;margin-top:4px">${l.cap === '-' ? '견적 산출 전' : l.cap + ' · 연 2만km · 무보증'}</div></div>
+    <div><div style="font-weight:700;margin-bottom:14px">진행 단계</div><div class="steps">${STAGES.map((s, i) => `<div class="step ${i < l.stage ? 'done' : i === l.stage ? 'cur' : ''}"><span class="dot">${i < l.stage ? '✓' : i + 1}</span><div><b>${s}</b><small>${i < l.stage ? '완료' : i === l.stage ? '현재 단계' : '대기'}${i === 5 ? ' · 금융사 전자계약' : ''}</small></div></div>`).join('')}</div></div>
+    <div class="field"><label>담당 메이트</label><select ${canAssign ? '' : 'disabled'} onchange="LEADS.find(x=>x.id==='${l.id}').mate=this.value||null;toast('담당 메이트를 바꿨어요');render()"><option value="">미배정</option>${MATES.map(m => `<option value="${m.id}" ${l.mate === m.id ? 'selected' : ''}>${m.name}</option>`).join('')}</select>${canAssign ? '' : '<small class="muted">배정 변경은 운영자 이상만 할 수 있어요</small>'}</div>
+  </div>
+  <div class="df"><button class="btn btn-ghost" onclick="closeAll();S.chat=(CHATS.find(c=>c.lead==='${l.id}')||{}).id||S.chat;go('consult')">${ic('chat', 20)}상담 열기</button><button class="btn btn-primary" ${l.stage >= 6 ? 'disabled' : ''} onclick="LEADS.find(x=>x.id==='${l.id}').stage++;closeAll();render();toast('다음 단계로 옮기고 고객에게 알림톡을 보냈어요')">다음 단계로${ic('chevron-right', 18)}</button></div>`);
+}
+
+/* ── 메이트 상담 ─────────────────────── */
+PAGES.consult = () => {
+  const list = CHATS.filter(c => !scope() || c.mate === ME_MATE);
+  if (!list.find(c => c.id === S.chat)) S.chat = list[0].id;
+  const c = CHATS.find(x => x.id === S.chat);
+  const lead = LEADS.find(l => l.id === c.lead);
+  const readOnly = S.role !== 'mate' && c.mate !== ME_MATE;
+  const msgs = c.msgs.map(m => {
+    if (m[0] === 'sys') return `<div class="sys">${m[1]}</div>`;
+    const who = m[0] === 'cust' ? c.name : m[0] === 'ai' ? 'AI 메이트' : mateName(c.mate) + ' 메이트';
+    const avatar = m[0] === 'ai' ? `<img src="./eeung_symbol_blue.svg" style="width:34px;height:34px;border-radius:50%;background:var(--primary-soft);padding:6px">` : m[0] === 'cust' ? av(c.name, 34) : '';
+    return `<div class="msg ${m[0]}">${avatar}<div><div class="who-l">${m[0] === 'me' ? '' : who}</div><div class="bub">${m[1]}</div></div><small>${m[2]}</small></div>`;
+  }).join('');
+  return {
+    title: '메이트 상담', sub: 'AI 메이트가 1차 응대하고, 필요할 때 메이트에게 넘겨요',
+    html: `<div class="consult">
+      <div class="clist"><div class="hd"><div class="search" style="min-width:0">${ic('search', 18)}<input placeholder="고객 검색"></div></div><div class="items">${list.map(x => `<div class="citem ${x.id === S.chat ? 'on' : ''}" onclick="S.chat='${x.id}';CHATS.find(c=>c.id==='${x.id}').unread=0;render()">${av(x.name, 42)}<div class="body"><div class="r1"><b>${x.name}</b><small>${x.time}</small></div><p>${x.last}</p><div class="tags"><span class="pill p-orange">AI 이관 · ${x.handoff}</span>${scope() ? '' : `<span class="pill p-gray">${mateName(x.mate)}</span>`}${x.unread ? `<span class="pill p-red">${x.unread}</span>` : ''}</div></div></div>`).join('')}</div></div>
+      <div class="thread"><div class="th">${av(c.name, 40)}<div style="flex:1"><b>${c.name}</b><div class="muted" style="font-size:13px">${lead.car} · ${STAGES[lead.stage]}</div></div>${readOnly ? '<span class="pill p-gray">열람 전용</span>' : ''}<button class="btn btn-ghost btn-sm" onclick="leadDetail('${lead.id}')">리드 상세</button></div>
+        <div class="msgs" id="msgs"><div class="summary"><div class="st">${ic('sparkle', 18)}AI 1차 상담 요약</div><dl>${Object.entries(c.sum).map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join('')}</dl></div>${msgs}</div>
+        <div class="compose">${readOnly ? `<div class="notice gray" style="margin:0">${ic('lock', 20)}<span>${mateName(c.mate)} 메이트 담당 상담이에요. ${S.role === 'super' ? '최고관리자' : '운영자'}는 열람만 할 수 있어요.</span></div>` : `<div class="chips">${['견적서 보내드릴게요', '승계 비용 계산해 드릴게요', '심사 서류 안내드릴게요', '출고 일정 확인해 볼게요'].map(t => `<button class="chip" onclick="document.getElementById('cin').value='${t}'">${t}</button>`).join('')}</div><div class="cbox"><textarea id="cin" placeholder="메시지 입력" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMsg()}"></textarea><button class="btn btn-primary" onclick="sendMsg()">보내기</button></div>`}</div></div>
+      <div class="cside"><h4>고객</h4><dl class="kv"><dt>이름</dt><dd>${c.name}</dd><dt>연락처</dt><dd class="masked">${mask((MEMBERS.find(m => m.name === c.name) || { ph: '010-0000-0000' }).ph)}</dd><dt>가입</dt><dd>카카오</dd><dt>담당</dt><dd>${mateName(c.mate)}</dd></dl>
+        <h4>견적 비교</h4>${c.quotes.map(q => `<div class="quote ${q[3] ? 'best' : ''}"><div class="q1"><span>${q[0]}</span>${q[3] ? '<span class="pill p-blue" style="font-size:12px;padding:3px 9px">최저가</span>' : ''}</div><div class="q2 num">${won(q[1])}<small>원/월</small></div><div class="q3">${q[2]}</div></div>`).join('')}
+        ${readOnly ? '' : `<button class="btn btn-primary" style="width:100%;justify-content:center;margin-top:6px" onclick="sendQuote()">${ic('doc', 20)}견적서 보내기</button><button class="btn btn-ghost" style="width:100%;justify-content:center;margin-top:10px" onclick="go('notify')">${ic('megaphone', 20)}알림톡 보내기</button>`}</div>
+    </div>`,
+    after: () => { const m = $('msgs'); m.scrollTop = m.scrollHeight; },
+  };
+};
+const nowT = () => { const d = new Date(); return String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0'); };
+function sendMsg() { const v = $('cin').value.trim(); if (!v) return; const c = CHATS.find(x => x.id === S.chat); c.msgs.push(['me', v, nowT()]); c.last = v; c.time = '방금'; render(); }
+function sendQuote() { const c = CHATS.find(x => x.id === S.chat); const q = c.quotes[0]; c.msgs.push(['me', `견적서를 보내드렸어요.\n${q[0]} 월 ${won(q[1])}원 · ${q[2]}\n확인하시고 궁금한 점 말씀해 주세요.`, nowT()]); render(); toast('견적서를 보내고 알림톡도 같이 보냈어요'); }
+
+/* ── 회원 관리 ───────────────────────── */
+const REVEALED = new Set();
+PAGES.members = () => {
+  const list = scope() ? MEMBERS.filter(m => m.mate === ME_MATE) : MEMBERS;
+  const isSuper = S.role === 'super';
+  return {
+    title: '회원 관리', sub: scope() ? `내 담당 고객 ${list.length}명` : `전체 ${won(3208)}명 · 이번 달 가입 412명`,
+    right: `<div class="search">${ic('search', 20)}<input placeholder="이름, 연락처 뒷자리"></div>${scope() ? '' : '<select class="sel"><option>전체 상태</option><option>정상</option><option>휴면 예정</option><option>탈퇴 요청</option></select>'}`,
+    html: `${S.role === 'ops' ? roleNote('운영자에게는 연락처가 가려져 보여요. 원문은 최고관리자만 볼 수 있고, 볼 때마다 접속 로그에 남아요.') : ''}${isSuper ? `<div class="notice orange">${ic('shield', 20)}<span>연락처 원문을 보면 누가 언제 봤는지 '권한·접속 로그'에 기록돼요.</span></div>` : ''}
+    <div class="card tbl-wrap"><table class="tbl"><thead><tr><th>회원</th><th>연락처</th><th>가입</th><th>내 차</th><th>관심 차종</th>${scope() ? '' : '<th>담당 메이트</th>'}<th>상태</th></tr></thead><tbody>${list.map((m, i) => `<tr><td><div class="who">${av(m.name, 38)}<div><b>${m.name}</b><small>${m.via} 가입</small></div></div></td><td><span class="masked">${isSuper && REVEALED.has(i) ? m.ph : mask(m.ph)}</span>${isSuper && !REVEALED.has(i) ? ` <button class="link" style="margin-left:8px" onclick="reveal(${i},'${m.name}')">원문 보기</button>` : ''}</td><td class="muted num">${m.join}</td><td>${m.car}</td><td>${m.want}</td>${scope() ? '' : `<td>${m.mate ? mateName(m.mate) : '<span class="pill p-red">미배정</span>'}</td>`}<td><span class="pill ${m.st === '정상' ? 'p-green' : m.st === '휴면 예정' ? 'p-orange' : 'p-red'}">${m.st}</span></td></tr>`).join('')}</tbody></table></div>
+    ${scope() ? roleNote('메이트는 담당 고객만 볼 수 있어요. 연락은 상담 화면과 알림톡으로 해요.') : ''}`,
+  };
+};
+function reveal(i, name) { REVEALED.add(i); LOGS.unshift([nowTFull(), '노은철', '최고관리자', '회원 원문 조회', name + ' 연락처', '211.234.**.12']); render(); toast('원문을 표시했어요 · 접속 로그에 기록됨'); }
+const nowTFull = () => { const d = new Date(); return `${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')} ${nowT()}`; };
+
+/* ── 메이트 계정·배정 ─────────────────── */
+PAGES.mates = () => {
+  const isSuper = S.role === 'super';
+  const queue = LEADS.filter(l => !l.mate);
+  return {
+    title: '메이트 계정·배정', sub: `메이트 ${MATES.length}명 · 미배정 상담 ${queue.length}건`,
+    right: isSuper ? `<button class="btn btn-primary" onclick="addMate()">${ic('plus', 20)}메이트 추가</button>` : '',
+    html: `<div class="card"><div class="hd"><h3>미배정 상담</h3><span class="pill p-red">${queue.length}건</span><div class="grow"></div><button class="btn btn-soft btn-sm" onclick="autoAssign()">${ic('bolt', 18)}상담 적은 순으로 자동 배정</button></div>
+      ${queue.length ? `<table class="tbl"><thead><tr><th>고객</th><th>차량</th><th>유입</th><th>대기</th><th style="width:220px">배정</th></tr></thead><tbody>${queue.map(l => `<tr><td><div class="who">${av(l.name, 36)}<b>${l.name}</b></div></td><td>${l.car}</td><td class="muted">${l.src}</td><td class="muted">${l.ago}</td><td><select class="sel sel-sm" onchange="if(this.value){LEADS.find(x=>x.id==='${l.id}').mate=this.value;render();toast('${l.name} 고객을 배정했어요')}"><option value="">메이트 선택</option>${MATES.filter(m => m.st !== '오프라인').map(m => `<option value="${m.id}">${m.name} (진행 ${m.active}건)</option>`).join('')}</select></td></tr>`).join('')}</tbody></table>` : '<div class="empty">미배정 상담이 없어요</div>'}</div>
+    <div class="card tbl-wrap"><div class="hd"><h3>메이트</h3></div><table class="tbl"><thead><tr><th>메이트</th><th>상태</th><th>진행 중</th><th>이번 달 계약</th><th>전환율</th><th>권한</th>${isSuper ? '<th></th>' : ''}</tr></thead><tbody>${MATES.map(m => `<tr><td><div class="who">${av(m.name, 38)}<div><b>${m.name}</b><small>${m.since} 합류</small></div></div></td><td><span class="pill ${m.st === '상담 중' ? 'p-blue' : m.st === '대기' ? 'p-green' : 'p-gray'}">${m.st}</span></td><td class="num">${m.active}건</td><td class="num">${m.month}건</td><td class="num">${m.rate}%</td><td>${isSuper ? `<select class="sel sel-sm" onchange="toast('${m.name} 권한을 '+this.value+'(으)로 바꿨어요 · 로그 기록됨')"><option>메이트</option><option>운영자</option><option>최고관리자</option></select>` : m.perm}</td>${isSuper ? `<td style="text-align:right"><button class="link" onclick="toast('${m.name} 계정을 일시 중지했어요')">일시 중지</button></td>` : ''}</tr>`).join('')}</tbody></table></div>
+    ${isSuper ? '' : roleNote('운영자는 상담 배정만 할 수 있어요. 메이트 계정 생성·권한 변경은 최고관리자만 해요.')}`,
+  };
+};
+function autoAssign() { LEADS.filter(l => !l.mate).forEach(l => { const m = MATES.filter(x => x.st !== '오프라인').sort((a, b) => a.active - b.active)[0]; l.mate = m.id; m.active++; }); render(); toast('미배정 상담을 자동으로 배정했어요'); }
+function addMate() {
+  openModal(`<h2>메이트 추가</h2><div class="field"><label>이름</label><input placeholder="홍길동"></div><div class="field"><label>회사 이메일</label><input placeholder="name@eeung.com"></div><div class="field"><label>권한</label><select><option>메이트</option><option>운영자</option></select></div><div class="notice gray" style="margin-bottom:20px">${ic('mail', 20)}<span>초대 메일을 받은 메이트가 직접 비밀번호를 설정해요.</span></div><div style="display:flex;gap:10px;justify-content:flex-end"><button class="btn btn-ghost" onclick="closeAll()">취소</button><button class="btn btn-primary" onclick="closeAll();toast('초대 메일을 보냈어요')">초대 보내기</button></div>`);
+}
+
+/* ── 요율표·차량 데이터 ─────────────── */
+PAGES.data = () => {
+  const edit = can('data') === 'full';
+  const t = curTab('data', 'rate');
+  let body = '';
+  if (t === 'rate') body = `${edit ? `<div class="drop">${ic('arrow-up', 28)}<div style="margin-top:8px"><b>요율표 엑셀을 끌어다 놓거나 클릭해서 올리세요</b></div><div style="font-size:14px;margin-top:4px">올리면 '검수 대기'로 들어가고, 검수 후 적용돼요</div></div>` : ''}
+    <div class="card tbl-wrap"><div class="hd"><h3>캐피탈사 요율표</h3></div><table class="tbl"><thead><tr><th>캐피탈사</th><th>상품</th><th>적용 기간</th><th>업로드</th><th>올린 사람</th><th>상태</th>${edit ? '<th></th>' : ''}</tr></thead><tbody>${RATES.map((r, i) => `<tr><td><b>${r.cap}</b></td><td>${r.prod}</td><td class="num">${r.period}</td><td class="muted num">${r.up}</td><td>${r.by}</td><td><span class="pill ${r.st === '적용 중' ? 'p-green' : 'p-orange'}">${r.st}</span></td>${edit ? `<td style="text-align:right">${r.st === '검수 대기' ? `<button class="btn btn-primary btn-sm" onclick="RATES[${i}].st='적용 중';render();toast('${r.cap} 요율표를 적용했어요')">검수 완료</button>` : '<button class="link">내려받기</button>'}</td>` : ''}</tr>`).join('')}</tbody></table></div>`;
+  if (t === 'car') body = `<div class="card tbl-wrap"><div class="hd"><h3>차량 데이터</h3><div class="grow"></div>${edit ? `<button class="btn btn-ghost btn-sm">${ic('arrow-up', 18)}차량 데이터 올리기</button>` : ''}</div><table class="tbl"><thead><tr><th>차종</th><th>트림</th><th>가격 갱신</th><th>보조금</th><th>이미지·옵션</th></tr></thead><tbody>${CARS.map(c => `<tr><td><b>${c[0]}</b></td><td class="num">${c[1]}개</td><td class="muted num">2026.${c[2]}</td><td>${c[3]}</td><td><span class="pill ${c[4] === '완료' ? 'p-green' : 'p-orange'}">${c[4]}</span></td></tr>`).join('')}</tbody></table></div>`;
+  if (t === 'crawl') {
+    const done = CRAWL.reduce((a, c) => a + c[1], 0), all = CRAWL.reduce((a, c) => a + c[2], 0);
+    body = `<div class="notice">${ic('bolt', 20)}<span>캐피탈 견적 자동화가 각 사 포털에서 같은 조건으로 견적을 뽑아 여기로 모아요. 조건: 48개월 · 연 2만km · 무보증 · 무선납</span></div>
+    <div class="grid g21"><div class="card tbl-wrap"><div class="hd"><h3>차종별 최저가</h3><div class="grow"></div><span class="pill p-gray">10.08 06:00 수집</span></div><table class="tbl"><thead><tr><th>차종</th><th>최저 캐피탈</th><th>월 납입금</th><th>2위와 차이</th></tr></thead><tbody>${BEST.map(b => `<tr><td><b>${b[0]}</b></td><td>${b[1]}</td><td class="num"><b>${won(b[2])}원</b></td><td class="num muted">-${won(b[3])}원</td></tr>`).join('')}</tbody></table></div>
+    <div class="card"><div class="hd"><h3>수집 진행</h3><div class="grow"></div><b class="num">${Math.round(done / all * 100)}%</b></div><div class="funnel">${CRAWL.map(c => `<div class="row" style="grid-template-columns:110px 1fr 56px"><span style="font-size:14px">${c[0].replace('캐피탈', '')}</span><div class="track"><i style="width:${c[1] / c[2] * 100}%"></i></div><b style="font-size:14px">${c[1]}/${c[2]}</b></div>`).join('')}</div></div></div>`;
+  }
+  return {
+    title: '요율표·차량 데이터', sub: '견적 엔진이 쓰는 기준 데이터예요',
+    html: `${tabs('data', [['rate', '요율표'], ['car', '차량 데이터'], ['crawl', '자동 수집 최저가']])}${body}${edit ? '' : roleNote('메이트는 조회만 할 수 있어요. 업로드·적용은 운영자 이상이 해요.')}`,
+  };
+};
+
+/* ── 콘텐츠 ─────────────────────────── */
+PAGES.content = () => {
+  const t = curTab('content', 'banner');
+  const tg = (on, js) => `<button class="toggle ${on ? 'on' : ''}" onclick="${js};render();toast('노출 설정을 바꿨어요')"></button>`;
+  let body = '';
+  if (t === 'banner') body = `<div class="banners">${CONTENT.banner.map((b, i) => `<div><div class="bnr" style="background:${b.g};${b.on ? '' : 'opacity:.45'}"><small>${b.s}</small><div class="bf"><b>${b.t.replace('\n', '<br>')}</b></div></div><div style="display:flex;align-items:center;justify-content:space-between;margin-top:12px;padding:0 4px"><span class="muted" style="font-size:14px">홈 상단 · ${i + 1}번째</span>${tg(b.on, `CONTENT.banner[${i}].on=!CONTENT.banner[${i}].on`)}</div></div>`).join('')}</div>`;
+  if (t === 'guide') body = `<div class="card"><table class="tbl"><thead><tr><th>제목</th><th>게시일</th><th>노출</th></tr></thead><tbody>${CONTENT.guide.map((g, i) => `<tr><td><b>${g[0]}</b></td><td class="muted num">${g[1]}</td><td>${tg(g[2], `CONTENT.guide[${i}][2]=!CONTENT.guide[${i}][2]`)}</td></tr>`).join('')}</tbody></table></div>`;
+  if (t === 'review') body = `<div class="card"><table class="tbl"><thead><tr><th>후기</th><th>작성자</th><th>노출</th></tr></thead><tbody>${CONTENT.review.map((g, i) => `<tr><td><b>${g[0]}</b></td><td>${g[1]}</td><td>${tg(g[2], `CONTENT.review[${i}][2]=!CONTENT.review[${i}][2]`)}</td></tr>`).join('')}</tbody></table></div>`;
+  if (t === 'faq') body = `<div class="card"><table class="tbl"><thead><tr><th>질문</th><th>노출</th></tr></thead><tbody>${CONTENT.faq.map((g, i) => `<tr><td><b>${g[0]}</b></td><td>${tg(g[1], `CONTENT.faq[${i}][1]=!CONTENT.faq[${i}][1]`)}</td></tr>`).join('')}</tbody></table></div>`;
+  if (t === 'notice') body = `<div class="card"><table class="tbl"><thead><tr><th>제목</th><th>게시일</th><th>노출</th></tr></thead><tbody>${CONTENT.notice.map((g, i) => `<tr><td><b>${g[0]}</b></td><td class="muted num">${g[1]}</td><td>${tg(g[2], `CONTENT.notice[${i}][2]=!CONTENT.notice[${i}][2]`)}</td></tr>`).join('')}</tbody></table></div>`;
+  return {
+    title: '콘텐츠 관리', sub: '앱에 보이는 배너와 글을 관리해요',
+    right: `<button class="btn btn-primary" onclick="toast('새 콘텐츠 작성 화면이 열려요 (데모)')">${ic('plus', 20)}새로 만들기</button>`,
+    html: `${tabs('content', [['banner', '배너'], ['guide', '가이드'], ['review', '후기'], ['faq', 'FAQ'], ['notice', '공지']])}${body}`,
+  };
+};
+
+/* ── 푸시·알림톡 ────────────────────── */
+const NF = { ch: 'kakao', target: 'all', tpl: '견적 발송 안내', text: '[이응] 정민준님, 요청하신 EEUNG 견적이 도착했어요.\n\n기아 EV3 롱레인지 에어\n월 498,000원 · 48개월\n\n견적은 7일 동안 유효해요.' };
+PAGES.notify = () => {
+  const mate = scope();
+  if (mate) NF.target = 'one';
+  const targets = mate ? [['one', '담당 고객 개별']] : [['all', '전체 회원 (2,140명)'], ['seg', '세그먼트 선택'], ['one', '개별 회원']];
+  const preview = NF.ch === 'kakao'
+    ? `<div class="phone"><div class="scr"><div style="font-size:12px;color:#4A5B70;text-align:center">오늘</div><div class="kakao"><div class="kh">알림톡 도착</div><div class="kb">${NF.text}</div><div class="kbtn">견적 확인하기</div></div></div></div>`
+    : `<div class="phone"><div class="scr push"><div style="color:#fff;text-align:center;font-size:44px;font-weight:300;margin:30px 0 10px">14:30</div><div class="pushcard"><img src="./eeung_symbol_blue.svg" style="background:#fff;padding:5px"><div><b>이응</b>${NF.text.split('\n')[0].replace('[이응] ', '')}</div></div></div></div>`;
+  return {
+    title: '푸시·알림톡', sub: mate ? '담당 고객에게 개별로 보낼 수 있어요' : '앱 푸시와 카카오 알림톡을 보내요',
+    html: `<div class="grid g21"><div class="card"><div class="hd"><h3>새 메시지</h3></div>
+      <div class="field"><label>채널</label>${`<div class="tabs">${[['kakao', '카카오 알림톡'], ['push', '앱 푸시']].map(([k, l]) => `<button class="${NF.ch === k ? 'on' : ''}" onclick="NF.ch='${k}';render()">${l}</button>`).join('')}</div>`}</div>
+      <div class="field"><label>받는 사람</label><select onchange="NF.target=this.value;render()" ${mate ? 'disabled' : ''}>${targets.map(([k, l]) => `<option value="${k}" ${NF.target === k ? 'selected' : ''}>${l}</option>`).join('')}</select></div>
+      ${NF.target === 'seg' ? `<div class="field"><label>세그먼트</label><select><option>내 차 등록 회원 (612명)</option><option>견적 만료 D-3 (38명)</option><option>상담 후 7일 미응답 (54명)</option><option>전기차 관심 (420명)</option></select></div>` : ''}
+      ${NF.target === 'one' ? `<div class="field"><label>회원</label><select>${(mate ? MEMBERS.filter(m => m.mate === ME_MATE) : MEMBERS).map(m => `<option>${m.name} · ${mask(m.ph)}</option>`).join('')}</select></div>` : ''}
+      ${NF.ch === 'kakao' ? `<div class="field"><label>템플릿 (카카오 승인 완료)</label><select><option>견적 발송 안내</option><option>심사 서류 안내</option><option>단계 변경 안내</option><option>견적 만료 임박</option></select></div>` : ''}
+      <div class="field"><label>내용</label><textarea oninput="NF.text=this.value;document.querySelectorAll('.kb,.pushcard div').forEach(e=>{})" onchange="NF.text=this.value;render()">${NF.text}</textarea></div>
+      <div style="display:flex;gap:10px;justify-content:flex-end"><button class="btn btn-ghost" onclick="toast('예약했어요 · 내일 10:00 발송')">${ic('clock', 20)}예약</button><button class="btn btn-primary" onclick="sendNotify()">${ic('megaphone', 20)}지금 보내기</button></div></div>
+      <div class="card"><div class="hd"><h3>미리보기</h3></div>${preview}</div></div>
+      <div class="card tbl-wrap"><div class="hd"><h3>보낸 내역</h3></div><table class="tbl"><thead><tr><th>시간</th><th>채널</th><th>대상</th><th>내용</th><th>인원</th><th>보낸 사람</th></tr></thead><tbody>${(mate ? SENT.filter(s => s[5] === '이도윤') : SENT).map(s => `<tr><td class="muted num">${s[0]}</td><td><span class="pill ${s[1] === '알림톡' ? 'p-orange' : 'p-blue'}">${s[1]}</span></td><td>${s[2]}</td><td>${s[3]}</td><td class="num">${won(s[4])}명</td><td>${s[5]}</td></tr>`).join('')}</tbody></table></div>
+      ${mate ? roleNote('메이트는 담당 고객에게 개별로만 보낼 수 있어요. 전체·세그먼트 발송은 운영자 이상이 해요.') : ''}`,
+  };
+};
+function sendNotify() { const n = NF.target === 'all' ? 2140 : NF.target === 'seg' ? 612 : 1; SENT.unshift([nowTFull(), NF.ch === 'kakao' ? '알림톡' : '앱 푸시', NF.target === 'all' ? '전체 회원' : NF.target === 'seg' ? '세그먼트' : '개별', NF.text.split('\n')[0].replace('[이응] ', '').slice(0, 22), n, ROLES[S.role].name]); render(); toast(`${won(n)}명에게 보냈어요`); }
+
+/* ── 권한·접속 로그 ────────────────── */
+PAGES.audit = () => {
+  const rows = [
+    ['회원 관리', ['full', '전체 · 연락처 원문'], ['part', '조회 · 연락처 가림', true], ['self', '담당 고객만']],
+    ['상담·리드·계약', ['full', '전체'], ['full', '전체'], ['self', '배정된 건만']],
+    ['메이트 상담', ['full', '전체 열람'], ['full', '전체 열람'], ['self', '본인 상담']],
+    ['메이트 계정·배정', ['full', '계정 생성 · 권한'], ['part', '배정만'], ['none', '숨김']],
+    ['요율표·차량 데이터', ['full', '업로드 · 적용'], ['full', '업로드 · 적용'], ['part', '조회만']],
+    ['콘텐츠 관리', ['full', '편집'], ['full', '편집'], ['none', '숨김']],
+    ['푸시·알림톡', ['full', '전체 발송'], ['full', '전체 발송'], ['self', '담당 고객 개별']],
+    ['통계', ['full', '전체 · 매출 포함'], ['part', '운영 지표'], ['self', '본인 실적', true]],
+    ['권한·접속 로그', ['full', '전체'], ['none', '숨김'], ['none', '숨김'], true],
+  ];
+  const cell = c => `<span class="lv ${c[0]}">${c[1]}</span>${c[2] ? '<span class="review">확인 필요</span>' : ''}`;
+  return {
+    title: '권한·접속 로그', sub: '최고관리자만 볼 수 있어요',
+    html: `${tabs('audit', [['matrix', '권한표'], ['log', '접속 로그']])}
+    ${curTab('audit', 'matrix') === 'matrix' ? `<div class="card tbl-wrap"><div class="hd"><h3>역할별 권한</h3><div class="grow"></div><span class="review" style="font-size:12px;padding:4px 10px">확인 필요 = 결정 대기</span></div><table class="tbl matrix"><thead><tr><th>메뉴</th><th>최고관리자</th><th>운영자</th><th>메이트</th></tr></thead><tbody>${rows.map(r => `<tr><td><b>${r[0]}</b>${r[4] ? '<span class="review">추가 제안</span>' : ''}</td><td>${cell(r[1])}</td><td>${cell(r[2])}</td><td>${cell(r[3])}</td></tr>`).join('')}</tbody></table></div>
+    <div class="notice orange">${ic('bulb', 20)}<span>결정 대기 3가지: 운영자에게 연락처 원문을 보여줄지 · 메이트가 매출·수수료를 볼지 · 이 '권한·접속 로그' 메뉴를 둘지</span></div>`
+      : `<div class="card tbl-wrap"><div class="hd"><h3>접속 로그</h3><div class="grow"></div><button class="btn btn-ghost btn-sm">${ic('arrow-up', 18)}엑셀로 내려받기</button></div><table class="tbl"><thead><tr><th>시간</th><th>사용자</th><th>권한</th><th>행동</th><th>대상</th><th>IP</th></tr></thead><tbody>${LOGS.map(l => `<tr><td class="muted num">${l[0]}</td><td><b>${l[1]}</b></td><td><span class="pill ${l[2] === '최고관리자' ? 'p-blue' : l[2] === '운영자' ? 'p-cyan' : 'p-purple'}">${l[2]}</span></td><td>${l[3]}</td><td>${l[4]}</td><td class="muted num">${l[5]}</td></tr>`).join('')}</tbody></table></div>`}`,
+  };
+};
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeAll(); });
+render();
+</script>
+</body>
+</html>
